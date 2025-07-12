@@ -119,12 +119,12 @@ function rotate(matrix, dir) {
 }
 
 function resetPiece() {
-  currentPiece = nextPiece || randomPiece();
-  nextPiece = randomPiece();
+  currentPiece = nextPiece;
+  nextPiece = randomPiece(); // corrigido
   pos = {x: Math.floor(COLS/2) - Math.floor(currentPiece[0].length/2), y:0};
   if(collide(board, currentPiece, pos)) {
     gameOver = true;
-    showGameOverModal(); // <- Nova função modal
+    showGameOverModal();
   }
 }
 
@@ -153,8 +153,8 @@ function clearLines() {
       level++;
       dropInterval *= 0.8;
     }
-    updateScore();
   }
+  updateScore(); // corrigido
 }
 
 function updateScore() {
@@ -172,7 +172,9 @@ function draw() {
 
 function drawNext() {
   nextCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
-  drawMatrix(nextPiece, {x:0, y:0}, nextCtx);
+  const offsetX = Math.floor((4 - nextPiece[0].length) / 2);
+  const offsetY = Math.floor((4 - nextPiece.length) / 2);
+  drawMatrix(nextPiece, {x: offsetX, y: offsetY}, nextCtx); // corrigido
 }
 
 function drop() {
@@ -233,7 +235,7 @@ function startGame() {
   gameOver = false;
   startTime = null;
 
-  nextPiece = randomPiece(); // 👈 esta linha evita erro
+  nextPiece = randomPiece();
   resetPiece();
   updateScore();
   update();
@@ -259,7 +261,6 @@ window.addEventListener("keydown", (e) => {
   }
 });
 
-// Modal
 function showGameOverModal() {
   const modal = document.getElementById("modal");
   const finalScore = document.getElementById("final-score");
