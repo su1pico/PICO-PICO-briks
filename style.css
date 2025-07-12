@@ -1,0 +1,214 @@
+/* Reset e básico */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: linear-gradient(135deg, #fefcea, #f1da36);
+  font-family: 'Fredoka', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  color: #333;
+  user-select: none;
+}
+
+#game-container {
+  background: #fff;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+  max-width: 480px;
+  width: 100%;
+  text-align: center;
+}
+
+h1 {
+  font-weight: 700;
+  margin-bottom: 15px;
+  font-size: 2.5rem;
+  color: #fa8231;
+  text-shadow: 2px 2px #f7b731;
+}
+
+#game {
+  background: #222;
+  display: block;
+  margin: 0 auto 15px;
+  border-radius: 10px;
+  box-shadow: inset 0 0 10px #fa8231;
+  image-rendering: pixelated;
+}
+
+#info {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 15px;
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #fa8231;
+  text-shadow: 1px 1px #f7b731;
+}
+
+#next {
+  background: #222;
+  border-radius: 10px;
+  box-shadow: inset 0 0 10px #f7b731;
+  margin-left: 10px;
+}
+
+#controls {
+  margin-top: 10px;
+}
+
+button {
+  background: #fa8231;
+  border: none;
+  padding: 10px 20px;
+  margin: 5px;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  border-radius: 30px;
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 5px 0 #d35400;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background: #f7b731;
+  color: #222;
+}
+
+button:active {
+  box-shadow: none;
+  transform: translateY(2px);
+}
+
+/* Modal de fim de fase */
+#modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+#modal.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#modal-content {
+  background: white;
+  padding: 25px 35px;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 320px;
+  text-align: center;
+  animation: modalPop 0.4s ease forwards;
+  box-shadow: 0 8px 25px rgba(250, 130, 49, 0.6);
+}
+
+@keyframes modalPop {
+  from {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+#modal-content h2 {
+  margin-bottom: 15px;
+  color: #fa8231;
+  text-shadow: 1px 1px #f7b731;
+}
+
+#modal-content p {
+  font-weight: 700;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+#player-name {
+  width: 80%;
+  padding: 8px;
+  font-size: 1.1rem;
+  border-radius: 10px;
+  border: 2px solid #fa8231;
+  margin-bottom: 15px;
+  outline-color: #f7b731;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  text-align: center;
+}
+
+#save-score-btn {
+  background: #fa8231;
+  padding: 10px 25px;
+  border-radius: 30px;
+  border: none;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 5px 0 #d35400;
+  transition: background 0.3s ease;
+  font-family: 'Fredoka', sans-serif;
+}
+
+#save-score-btn:hover {
+  background: #f7b731;
+  color: #222;
+}
+
+#save-score-btn:active {
+  box-shadow: none;
+  transform: translateY(2px);
+}
+
+/* Responsivo */
+@media (max-width: 480px) {
+  #game-container {
+    padding: 15px;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  #info {
+    font-size: 1rem;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  #game {
+    width: 280px !important;
+    height: 560px !important;
+  }
+
+  #next {
+    width: 100px !important;
+    height: 100px !important;
+    margin-left: 0;
+    margin-top: 10px;
+  }
+
+  button {
+    width: 100%;
+    margin: 5px 0;
+  }
+}
