@@ -1,71 +1,37 @@
 <!DOCTYPE html>
 <html lang="pt-PT">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Tetris Pico-Pico</title>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet" />
-<style>
-  body {
-    background: linear-gradient(90deg, #fff9b1, #fdd835);
-    font-family: 'Fredoka One', cursive;
-    margin: 0; padding: 20px;
-    text-align: center;
-    color: #ff6f00;
-  }
-  h1 {
-    font-size: 2.5em;
-    margin-bottom: 10px;
-    text-shadow: 1px 1px 3px #ff8f00;
-  }
-  #game {
-    margin: 0 auto;
-    background: #222;
-    border-radius: 10px;
-    padding: 10px;
-    width: 320px;
-  }
-  canvas {
-    background: #111;
-    display: block;
-    margin: 0 auto 10px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px #ff8f00;
-  }
-  #info {
-    font-size: 1.1em;
-    margin: 10px 0;
-  }
-  button {
-    font-family: 'Fredoka One', cursive;
-    font-size: 1em;
-    background: #ff8f00;
-    border: none;
-    padding: 10px 20px;
-    margin: 5px;
-    border-radius: 25px;
-    color: white;
-    cursor: pointer;
-    box-shadow: 0 0 5px #ff6f00;
-    transition: background 0.3s ease;
-  }
-  button:hover {
-    background: #ffa726;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tetris Pico-Pico</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka&display=swap" rel="stylesheet" />
 </head>
 <body>
-
-<h1>Tetris Pico-Pico</h1>
-<div id="game">
-  <canvas id="board" width="320" height="640"></canvas>
-  <canvas id="next" width="128" height="128"></canvas>
-  <div id="info">
-    <div>Nível: <span id="level">1</span> | Pontuação: <span id="score">0</span> | Tempo: <span id="time">00:00</span></div>
+  <div id="game-container">
+    <h1>Tetris Pico-Pico</h1>
+    <canvas id="board" width="320" height="640"></canvas>
+    <div id="info">
+      <span>Nível: <span id="level">1</span></span>
+      <span>Pontuação: <span id="score">0</span></span>
+      <span>Tempo: <span id="time">00:00</span></span>
+    </div>
+    <canvas id="next" width="128" height="128"></canvas>
+    <div id="controls">
+      <button id="startBtn">Iniciar</button>
+    </div>
   </div>
-  <button id="startBtn">Iniciar</button>
-</div>
 
-<script src="tetris.js"></script>
+  <!-- Modal de fim de jogo -->
+  <div id="modal">
+    <div id="modal-content">
+      <h2>Fim de Jogo!</h2>
+      <p id="final-score">Pontuação: 0</p>
+      <input type="text" id="player-name" placeholder="O teu nome" />
+      <button id="save-score-btn">Guardar Pontuação</button>
+    </div>
+  </div>
+
+  <script src="tetris.js"></script>
 </body>
 </html>
