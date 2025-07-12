@@ -210,3 +210,18 @@ button:active {
     margin: 5px 0;
   }
 }
+
+/* Fundo do jogo com imagem */
+body {
+  background-image: url("fundo.png"); /* substitui por outro nome se a imagem for diferente */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  margin: 0;
+  padding: 0;
+}
+
+/* Canvas transparente para mostrar o fundo */
+canvas {
+  background-color: transparent !important;
+}
