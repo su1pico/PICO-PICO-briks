@@ -15,8 +15,3 @@ Criado em HTML, CSS e JavaScript puros, com design cartoonado e responsivo para 
 - Modal de fim de jogo com inserção de nome
 - Responsivo para dispositivos móveis
 - Estilo inspirado na imagem do universo Pico-Pico
-
----
-
-## 🧩 Ficheiros do Projeto
-
