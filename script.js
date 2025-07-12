@@ -232,6 +232,8 @@ function startGame() {
   lastTime = 0;
   gameOver = false;
   startTime = null;
+
+  nextPiece = randomPiece(); // 👈 esta linha evita erro
   resetPiece();
   updateScore();
   update();
