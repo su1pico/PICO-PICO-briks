@@ -1,45 +1,71 @@
 <!DOCTYPE html>
 <html lang="pt-PT">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tetris Pico-Pico</title>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tetris Pico-Pico</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet" />
+<style>
+  body {
+    background: linear-gradient(90deg, #fff9b1, #fdd835);
+    font-family: 'Fredoka One', cursive;
+    margin: 0; padding: 20px;
+    text-align: center;
+    color: #ff6f00;
+  }
+  h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+    text-shadow: 1px 1px 3px #ff8f00;
+  }
+  #game {
+    margin: 0 auto;
+    background: #222;
+    border-radius: 10px;
+    padding: 10px;
+    width: 320px;
+  }
+  canvas {
+    background: #111;
+    display: block;
+    margin: 0 auto 10px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #ff8f00;
+  }
+  #info {
+    font-size: 1.1em;
+    margin: 10px 0;
+  }
+  button {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1em;
+    background: #ff8f00;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px;
+    border-radius: 25px;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 0 5px #ff6f00;
+    transition: background 0.3s ease;
+  }
+  button:hover {
+    background: #ffa726;
+  }
+</style>
 </head>
 <body>
-  <div id="game-container">
-    <h1>Tetris Pico-Pico</h1>
-    <canvas id="game" width="320" height="640"></canvas>
-    <div id="info">
-      <p>Nível: <span id="level">1</span></p>
-      <p>Pontuação: <span id="score">0</span></p>
-      <p>Próximo:</p>
-      <canvas id="next" width="120" height="120"></canvas>
-    </div>
-    <div id="controls">
-      <button id="start-btn">Iniciar</button>
-      <button id="mute-btn">🔊 Música Ligada</button>
-    </div>
+
+<h1>Tetris Pico-Pico</h1>
+<div id="game">
+  <canvas id="board" width="320" height="640"></canvas>
+  <canvas id="next" width="128" height="128"></canvas>
+  <div id="info">
+    <div>Nível: <span id="level">1</span> | Pontuação: <span id="score">0</span> | Tempo: <span id="time">00:00</span></div>
   </div>
+  <button id="startBtn">Iniciar</button>
+</div>
 
-  <div id="modal" class="hidden">
-    <div id="modal-content">
-      <h2>Fim da Fase</h2>
-      <p>Pontuação: <span id="final-score"></span></p>
-      <p>Estrelas: <span id="final-stars"></span></p>
-      <label for="player-name">Nome:</label>
-      <input type="text" id="player-name" maxlength="10" placeholder="Teu nome" />
-      <button id="save-score-btn">Guardar</button>
-    </div>
-  </div>
-
-  <audio id="bg-music" loop src="bg-music.mp3"></audio>
-  <audio id="sound-move" src="move.wav"></audio>
-  <audio id="sound-rotate" src="rotate.wav"></audio>
-  <audio id="sound-clear" src="clear.wav"></audio>
-  <audio id="sound-gameover" src="gameover.wav"></audio>
-
-  <script src="script.js"></script>
+<script src="tetris.js"></script>
 </body>
 </html>
