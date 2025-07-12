@@ -41,7 +41,6 @@ const SHAPES = [
   [[0,0,7],[7,7,7]],           // L
 ];
 
-// Estado do jogo
 let board;
 let currentPiece;
 let nextPiece;
@@ -125,7 +124,7 @@ function resetPiece() {
   pos = {x: Math.floor(COLS/2) - Math.floor(currentPiece[0].length/2), y:0};
   if(collide(board, currentPiece, pos)) {
     gameOver = true;
-    alert("Fim de jogo! Pontuação: " + score);
+    showGameOverModal(); // <- Nova função modal
   }
 }
 
@@ -213,7 +212,6 @@ function update(time = 0) {
     drop();
   }
 
-  // Atualiza tempo decorrido
   const elapsed = Math.floor((time - startTime) / 1000);
   const minutes = String(Math.floor(elapsed / 60)).padStart(2, "0");
   const seconds = String(elapsed % 60).padStart(2, "0");
@@ -250,11 +248,29 @@ window.addEventListener("keydown", (e) => {
     case "ArrowRight": move(1); break;
     case "ArrowDown": drop(); break;
     case "ArrowUp": rotatePiece(1); break;
-    case " ": // Drop rápido
+    case " ": 
       while(!collide(board, currentPiece, {x: pos.x, y: pos.y + 1})) {
         pos.y++;
       }
       drop();
       break;
+  }
+});
+
+// Modal
+function showGameOverModal() {
+  const modal = document.getElementById("modal");
+  const finalScore = document.getElementById("final-score");
+  finalScore.textContent = `Pontuação: ${score}`;
+  modal.classList.add("show");
+}
+
+document.getElementById("save-score-btn").addEventListener("click", () => {
+  const name = document.getElementById("player-name").value.trim();
+  if (name) {
+    alert(`Pontuação de ${name} guardada com sucesso! (simulado)`);
+    location.reload();
+  } else {
+    alert("Por favor, insere o teu nome.");
   }
 });
