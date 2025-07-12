@@ -34,13 +34,11 @@ h1 {
   text-shadow: 2px 2px #f7b731;
 }
 
-#board {
-  background: #222;
-  display: block;
-  margin: 0 auto 15px;
-  border-radius: 10px;
-  box-shadow: inset 0 0 10px #fa8231;
-  image-rendering: pixelated;
+#game-board {
+  background-image: url("capadojogo.png"); 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 #info {
