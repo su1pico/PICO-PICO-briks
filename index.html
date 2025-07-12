@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tetris Pico-Pico</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="game-container">
+    <h1>Tetris Pico-Pico</h1>
+    <canvas id="game" width="320" height="640"></canvas>
+    <div id="info">
+      <p>Nível: <span id="level">1</span></p>
+      <p>Pontuação: <span id="score">0</span></p>
+      <p>Próximo:</p>
+      <canvas id="next" width="120" height="120"></canvas>
+    </div>
+    <div id="controls">
+      <button id="start-btn">Iniciar</button>
+      <button id="mute-btn">🔊 Música Ligada</button>
+    </div>
+  </div>
+
+  <div id="modal" class="hidden">
+    <div id="modal-content">
+      <h2>Fim da Fase</h2>
+      <p>Pontuação: <span id="final-score"></span></p>
+      <p>Estrelas: <span id="final-stars"></span></p>
+      <label for="player-name">Nome:</label>
+      <input type="text" id="player-name" maxlength="10" placeholder="Teu nome" />
+      <button id="save-score-btn">Guardar</button>
+    </div>
+  </div>
+
+  <audio id="bg-music" loop src="bg-music.mp3"></audio>
+  <audio id="sound-move" src="move.wav"></audio>
+  <audio id="sound-rotate" src="rotate.wav"></audio>
+  <audio id="sound-clear" src="clear.wav"></audio>
+  <audio id="sound-gameover" src="gameover.wav"></audio>
+
+  <script src="script.js"></script>
+</body>
+</html>
