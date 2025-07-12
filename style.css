@@ -218,17 +218,3 @@ button:active {
     margin: 5px 0;
   }
 }
-
-/* Fundo do jogo com imagem */
-body {
-  background-image: url("capadojogo.png");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  margin: 0;
-  padding: 0;
-}
-
-canvas {
-  background-color: transparent !important;
-}
