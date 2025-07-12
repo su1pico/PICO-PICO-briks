@@ -63,22 +63,56 @@ function createMatrix(w, h) {
 }
 
 function drawBlock(x, y, color) {
-  ctx.fillStyle = color;
+  const gradient = ctx.createLinearGradient(
+    x * BLOCK_SIZE, y * BLOCK_SIZE,
+    (x + 1) * BLOCK_SIZE, (y + 1) * BLOCK_SIZE
+  );
+  gradient.addColorStop(0, "#ffffff");
+  gradient.addColorStop(1, color);
+
+  ctx.fillStyle = gradient;
   ctx.strokeStyle = "#222";
   ctx.lineWidth = 2;
+
+  ctx.shadowColor = "rgba(0, 0, 0, 0.4)";
+  ctx.shadowBlur = 6;
+
   ctx.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
   ctx.strokeRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+
+  ctx.shadowColor = "transparent";
+  ctx.shadowBlur = 0;
 }
 
-function drawMatrix(matrix, offset, context=ctx) {
+function drawMatrix(matrix, offset, context = ctx) {
   matrix.forEach((row, y) => {
     row.forEach((value, x) => {
-      if(value !== 0) {
-        context.fillStyle = COLORS[value];
-        context.strokeStyle = "#222";
-        context.lineWidth = 2;
-        context.fillRect((x + offset.x) * BLOCK_SIZE, (y + offset.y) * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
-        context.strokeRect((x + offset.x) * BLOCK_SIZE, (y + offset.y) * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+      if (value !== 0) {
+        const color = COLORS[value];
+        const drawCtx = context;
+
+        const gx = (x + offset.x);
+        const gy = (y + offset.y);
+
+        const gradient = drawCtx.createLinearGradient(
+          gx * BLOCK_SIZE, gy * BLOCK_SIZE,
+          (gx + 1) * BLOCK_SIZE, (gy + 1) * BLOCK_SIZE
+        );
+        gradient.addColorStop(0, "#ffffff");
+        gradient.addColorStop(1, color);
+
+        drawCtx.fillStyle = gradient;
+        drawCtx.strokeStyle = "#222";
+        drawCtx.lineWidth = 2;
+
+        drawCtx.shadowColor = "rgba(0, 0, 0, 0.4)";
+        drawCtx.shadowBlur = 6;
+
+        drawCtx.fillRect(gx * BLOCK_SIZE, gy * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+        drawCtx.strokeRect(gx * BLOCK_SIZE, gy * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+
+        drawCtx.shadowColor = "transparent";
+        drawCtx.shadowBlur = 0;
       }
     });
   });
@@ -120,7 +154,7 @@ function rotate(matrix, dir) {
 
 function resetPiece() {
   currentPiece = nextPiece;
-  nextPiece = randomPiece(); // corrigido
+  nextPiece = randomPiece();
   pos = {x: Math.floor(COLS/2) - Math.floor(currentPiece[0].length/2), y:0};
   if(collide(board, currentPiece, pos)) {
     gameOver = true;
@@ -154,7 +188,7 @@ function clearLines() {
       dropInterval *= 0.8;
     }
   }
-  updateScore(); // corrigido
+  updateScore();
 }
 
 function updateScore() {
@@ -174,7 +208,7 @@ function drawNext() {
   nextCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
   const offsetX = Math.floor((4 - nextPiece[0].length) / 2);
   const offsetY = Math.floor((4 - nextPiece.length) / 2);
-  drawMatrix(nextPiece, {x: offsetX, y: offsetY}, nextCtx); // corrigido
+  drawMatrix(nextPiece, {x: offsetX, y: offsetY}, nextCtx);
 }
 
 function drop() {
