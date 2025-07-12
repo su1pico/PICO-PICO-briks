@@ -3,10 +3,6 @@
 Um jogo de Tetris fofinho, divertido e colorido, inspirado no mundo do Pico-Pico!  
 Criado em HTML, CSS e JavaScript puros, com design cartoonado e responsivo para todas as idades.
 
-![Capa do Jogo](./capadojogo.png)
-
----
-
 ## 🚀 Funcionalidades
 
 - Blocos coloridos com efeitos visuais vibrantes
