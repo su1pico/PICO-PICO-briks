@@ -140,15 +140,24 @@ function merge(board, piece, pos) {
 }
 
 function rotate(matrix, dir) {
-  for(let y=0; y<matrix.length; y++) {
-    for(let x=0; x<y; x++) {
-      [matrix[x][y], matrix[y][x]] = [matrix[y][x], matrix[x][y]];
+  const rows = matrix.length;
+  const cols = matrix[0].length;
+  const res = Array.from({ length: cols }, () => Array(rows).fill(0));
+
+  for (let y = 0; y < rows; ++y) {
+    for (let x = 0; x < cols; ++x) {
+      if (dir > 0) {
+        res[x][rows - 1 - y] = matrix[y][x]; // rotação horária
+      } else {
+        res[cols - 1 - x][y] = matrix[y][x]; // rotação anti-horária
+      }
     }
   }
-  if(dir > 0) {
-    matrix.forEach(row => row.reverse());
-  } else {
-    matrix.reverse();
+
+  // Atualiza a matriz original com o resultado
+  matrix.length = 0;
+  for (let row of res) {
+    matrix.push(row);
   }
 }
 
