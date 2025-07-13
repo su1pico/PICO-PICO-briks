@@ -19,6 +19,7 @@
     <canvas id="next" width="128" height="128"></canvas>
     <div id="controls">
       <button id="startBtn">Iniciar</button>
+      <button id="toggle-sound">🔊 Som</button>
     </div>
   </div>
 
@@ -30,6 +31,13 @@
       <button id="save-score-btn">Guardar Pontuação</button>
     </div>
   </div>
+
+  <!-- Sons -->
+  <audio id="musica-fundo" src="audio/musica-fundo.mp3" loop></audio>
+  <audio id="som-rodar" src="audio/rodar.mp3"></audio>
+  <audio id="som-colidir" src="audio/colidir.mp3"></audio>
+  <audio id="som-pontos" src="audio/pontos.mp3"></audio>
+  <audio id="som-perdeu" src="audio/perdeu.mp3"></audio>
 
   <script src="tetris.js"></script>
 </body>
