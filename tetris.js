@@ -54,6 +54,16 @@ let lastTime;
 let gameOver;
 let startTime;
 
+const modal = document.getElementById("modal");
+const finalScore = document.getElementById("final-score");
+const starsContainer = document.getElementById("stars-container");
+const playerNameInput = document.getElementById("player-name");
+const saveScoreBtn = document.getElementById("save-score-btn");
+const shareScoreBtn = document.getElementById("share-score-btn");
+
+const gameOverSound = new Audio("gameover.mp3");
+const winSound = new Audio("win.mp3");
+
 function createMatrix(w, h) {
   const matrix = [];
   for(let y=0; y<h; y++) {
@@ -62,35 +72,12 @@ function createMatrix(w, h) {
   return matrix;
 }
 
-function drawBlock(x, y, color) {
-  const gradient = ctx.createLinearGradient(
-    x * BLOCK_SIZE, y * BLOCK_SIZE,
-    (x + 1) * BLOCK_SIZE, (y + 1) * BLOCK_SIZE
-  );
-  gradient.addColorStop(0, "#ffffff");
-  gradient.addColorStop(1, color);
-
-  ctx.fillStyle = gradient;
-  ctx.strokeStyle = "#222";
-  ctx.lineWidth = 2;
-
-  ctx.shadowColor = "rgba(0, 0, 0, 0.4)";
-  ctx.shadowBlur = 6;
-
-  ctx.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
-  ctx.strokeRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
-
-  ctx.shadowColor = "transparent";
-  ctx.shadowBlur = 0;
-}
-
 function drawMatrix(matrix, offset, context = ctx) {
   matrix.forEach((row, y) => {
     row.forEach((value, x) => {
       if (value !== 0) {
         const color = COLORS[value];
         const drawCtx = context;
-
         const gx = (x + offset.x);
         const gy = (y + offset.y);
 
@@ -168,6 +155,7 @@ function resetPiece() {
   if(collide(board, currentPiece, pos)) {
     gameOver = true;
     showGameOverModal();
+    gameOverSound.play();
   }
 }
 
@@ -206,61 +194,98 @@ function updateScore() {
 }
 
 function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawMatrix(board, {x:0, y:0});
-  if(currentPiece) {
-    drawMatrix(currentPiece, pos);
-  }
-}
+  ctx.fillStyle = "#1a1a1a";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-function drawNext() {
-  nextCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
-  const offsetX = Math.floor((4 - nextPiece[0].length) / 2);
-  const offsetY = Math.floor((4 - nextPiece.length) / 2);
-  drawMatrix(nextPiece, {x: offsetX, y: offsetY}, nextCtx);
-}
+  drawMatrix(board, {x:0, y:0}, ctx);
+  drawMatrix(currentPiece, pos, ctx);
 
-function drop() {
-  pos.y++;
-  if(collide(board, currentPiece, pos)) {
-    pos.y--;
-    merge(board, currentPiece, pos);
-    clearLines();
-    resetPiece();
-  }
-  dropCounter = 0;
-}
-
-function move(dir) {
-  pos.x += dir;
-  if(collide(board, currentPiece, pos)) {
-    pos.x -= dir;
-  }
-}
-
-function rotatePiece(dir) {
-  rotate(currentPiece, dir);  // roda diretamente a peça atual
+  nextCtx.fillStyle = "#222";
+  nextCtx.fillRect(0,0, nextCanvas.width, nextCanvas.height);
+  drawMatrix(nextPiece, {x:1, y:1}, nextCtx);
 }
 
 function update(time = 0) {
-  if(gameOver) return;
-  if(!startTime) startTime = time;
+  if (gameOver) return;
+
+  if(!lastTime) lastTime = time;
   const deltaTime = time - lastTime;
   dropCounter += deltaTime;
-  lastTime = time;
 
   if(dropCounter > dropInterval) {
-    drop();
+    pos.y++;
+    if(collide(board, currentPiece, pos)) {
+      pos.y--;
+      merge(board, currentPiece, pos);
+      clearLines();
+      resetPiece();
+    }
+    dropCounter = 0;
   }
 
-  const elapsed = Math.floor((time - startTime) / 1000);
-  const minutes = String(Math.floor(elapsed / 60)).padStart(2, "0");
-  const seconds = String(elapsed % 60).padStart(2, "0");
-  timeEl.textContent = `${minutes}:${seconds}`;
-
   draw();
-  drawNext();
+  updateTimer();
+  lastTime = time;
   requestAnimationFrame(update);
+}
+
+function updateTimer() {
+  const elapsed = Date.now() - startTime;
+  const minutes = Math.floor(elapsed / 60000);
+  const seconds = Math.floor((elapsed % 60000) / 1000);
+  timeEl.textContent = `${minutes.toString().padStart(2,"0")}:${seconds.toString().padStart(2,"0")}`;
+}
+
+function showGameOverModal() {
+  finalScore.textContent = `Pontuação: ${score}`;
+  showStars(score);
+  modal.classList.add("show");
+}
+
+function showStars(score) {
+  starsContainer.innerHTML = "";
+  let starCount = 0;
+  if(score > 8000) starCount = 3;
+  else if(score > 4000) starCount = 2;
+  else if(score > 1000) starCount = 1;
+
+  for(let i = 0; i < 3; i++) {
+    const star = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    star.setAttribute("class", "star");
+    star.setAttribute("viewBox", "0 0 24 24");
+    star.innerHTML = `<path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.758 1.496 8.281L12 18.897l-7.432 4.448 1.496-8.281-6.064-5.758 8.332-1.151z" fill="${i < starCount ? '#fa8231' : '#ddd'}"/>`;
+    starsContainer.appendChild(star);
+  }
+}
+
+function saveScore() {
+  const name = playerNameInput.value.trim();
+  if(!name) {
+    alert("Por favor, escreve o teu nome antes de guardar a pontuação.");
+    return;
+  }
+  const storedScores = JSON.parse(localStorage.getItem("picoPicoScores") || "[]");
+  storedScores.push({name: name, score: score});
+  storedScores.sort((a,b) => b.score - a.score);
+  localStorage.setItem("picoPicoScores", JSON.stringify(storedScores.slice(0,10)));
+  alert("Pontuação guardada!");
+}
+
+function shareScore() {
+  const name = playerNameInput.value.trim() || "Anónimo";
+  const shareText = `No jogo Desafio Pico-Pico, ${name} fez ${score} pontos! Consegues superar? #DesafioPicoPico`;
+  if(navigator.share) {
+    navigator.share({
+      title: "Desafio Pico-Pico",
+      text: shareText,
+      url: window.location.href,
+    }).catch(console.error);
+  } else {
+    // fallback: copia para clipboard
+    navigator.clipboard.writeText(shareText).then(() => {
+      alert("Texto de partilha copiado para o clipboard!");
+    });
+  }
 }
 
 function startGame() {
@@ -272,63 +297,46 @@ function startGame() {
   dropCounter = 0;
   lastTime = 0;
   gameOver = false;
-  startTime = null;
+  startTime = Date.now();
 
+  currentPiece = randomPiece();
   nextPiece = randomPiece();
-  resetPiece();
+  pos = {x: Math.floor(COLS/2) - Math.floor(currentPiece[0].length/2), y:0};
+
+  modal.classList.remove("show");
   updateScore();
   update();
 }
+
+// Controlo do jogo
+document.addEventListener("keydown", event => {
+  if(gameOver) return;
+  if(event.key === "ArrowLeft") {
+    pos.x--;
+    if(collide(board, currentPiece, pos)) pos.x++;
+  } else if(event.key === "ArrowRight") {
+    pos.x++;
+    if(collide(board, currentPiece, pos)) pos.x--;
+  } else if(event.key === "ArrowDown") {
+    pos.y++;
+    if(collide(board, currentPiece, pos)) {
+      pos.y--;
+      merge(board, currentPiece, pos);
+      clearLines();
+      resetPiece();
+    }
+    dropCounter = 0;
+  } else if(event.key === "ArrowUp") {
+    rotate(currentPiece, 1);
+    if(collide(board, currentPiece, pos)) {
+      rotate(currentPiece, -1);
+    }
+  }
+});
 
 startBtn.addEventListener("click", () => {
   startGame();
 });
 
-window.addEventListener("keydown", (e) => {
-  if(gameOver) return;
-  switch(e.key) {
-    case "ArrowLeft": move(-1); break;
-    case "ArrowRight": move(1); break;
-    case "ArrowDown": drop(); break;
-    case "ArrowUp": rotatePiece(1); break;
-    case " ": 
-      while(!collide(board, currentPiece, {x: pos.x, y: pos.y + 1})) {
-        pos.y++;
-      }
-      drop();
-      break;
-  }
-});
-
-function showGameOverModal() {
-  const modal = document.getElementById("modal");
-  const finalScore = document.getElementById("final-score");
-  finalScore.textContent = `Pontuação: ${score}`;
-  modal.classList.add("show");
-}
-
-function draw() {
-  // Fundo do tabuleiro
-  ctx.fillStyle = "#1a1a1a";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  drawMatrix(board, {x:0, y:0});
-  if(currentPiece) {
-    drawMatrix(currentPiece, pos);
-  }
-
-  // Borda
-  ctx.strokeStyle = "#888";
-  ctx.lineWidth = 4;
-  ctx.strokeRect(0, 0, COLS * BLOCK_SIZE, ROWS * BLOCK_SIZE);
-}
-
-document.getElementById("save-score-btn").addEventListener("click", () => {
-  const name = document.getElementById("player-name").value.trim();
-  if (name) {
-    alert(`Pontuação de ${name} guardada com sucesso! (simulado)`);
-    location.reload();
-  } else {
-    alert("Por favor, insere o teu nome.");
-  }
-});
+saveScoreBtn.addEventListener("click", saveScore);
+shareScoreBtn.addEventListener("click", shareScore);
