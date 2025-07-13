@@ -1,13 +1,21 @@
-const canvas = document.getElementById("board");
-const ctx = canvas.getContext("2d");
-
 const nextCanvas = document.getElementById("next");
 const nextCtx = nextCanvas.getContext("2d");
+const canvas = document.getElementById("board");
+const ctx = canvas.getContext("2d");
 
 const levelEl = document.getElementById("level");
 const scoreEl = document.getElementById("score");
 const timeEl = document.getElementById("time");
 const startBtn = document.getElementById("startBtn");
+const toggleSoundBtn = document.getElementById("toggle-sound");
+
+const musicaFundo = document.getElementById("musica-fundo");
+const somRodar = document.getElementById("som-rodar");
+const somColidir = document.getElementById("som-colidir");
+const somPontos = document.getElementById("som-pontos");
+const somPerdeu = document.getElementById("som-perdeu");
+
+let somAtivo = true;
 
 const COLS = 10;
 const ROWS = 20;
@@ -32,56 +40,29 @@ const COLORS = [
 
 const SHAPES = [
   [],
-  [[1,1,1,1]],                 // I
-  [[2,2],[2,2]],               // O
-  [[0,3,0],[3,3,3]],           // T
-  [[4,4,0],[0,4,4]],           // S
-  [[0,5,5],[5,5,0]],           // Z
-  [[6,0,0],[6,6,6]],           // J
-  [[0,0,7],[7,7,7]],           // L
+  [[1,1,1,1]],
+  [[2,2],[2,2]],
+  [[0,3,0],[3,3,3]],
+  [[4,4,0],[0,4,4]],
+  [[0,5,5],[5,5,0]],
+  [[6,0,0],[6,6,6]],
+  [[0,0,7],[7,7,7]],
 ];
 
-let board;
-let currentPiece;
-let nextPiece;
-let pos;
-let score;
-let level;
-let linesCleared;
-let dropInterval;
-let dropCounter;
-let lastTime;
-let gameOver;
-let startTime;
+let board, currentPiece, nextPiece, pos, score, level, linesCleared;
+let dropInterval, dropCounter, lastTime, gameOver, startTime;
+
+function playSound(audio) {
+  if (somAtivo) {
+    audio.currentTime = 0;
+    audio.play();
+  }
+}
 
 function createMatrix(w, h) {
   const matrix = [];
-  for(let y=0; y<h; y++) {
-    matrix.push(new Array(w).fill(0));
-  }
+  for(let y=0; y<h; y++) matrix.push(new Array(w).fill(0));
   return matrix;
-}
-
-function drawBlock(x, y, color) {
-  const gradient = ctx.createLinearGradient(
-    x * BLOCK_SIZE, y * BLOCK_SIZE,
-    (x + 1) * BLOCK_SIZE, (y + 1) * BLOCK_SIZE
-  );
-  gradient.addColorStop(0, "#ffffff");
-  gradient.addColorStop(1, color);
-
-  ctx.fillStyle = gradient;
-  ctx.strokeStyle = "#222";
-  ctx.lineWidth = 2;
-
-  ctx.shadowColor = "rgba(0, 0, 0, 0.4)";
-  ctx.shadowBlur = 6;
-
-  ctx.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
-  ctx.strokeRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
-
-  ctx.shadowColor = "transparent";
-  ctx.shadowBlur = 0;
 }
 
 function drawMatrix(matrix, offset, context = ctx) {
@@ -89,30 +70,26 @@ function drawMatrix(matrix, offset, context = ctx) {
     row.forEach((value, x) => {
       if (value !== 0) {
         const color = COLORS[value];
-        const drawCtx = context;
-
         const gx = (x + offset.x);
         const gy = (y + offset.y);
-
-        const gradient = drawCtx.createLinearGradient(
+        const gradient = context.createLinearGradient(
           gx * BLOCK_SIZE, gy * BLOCK_SIZE,
           (gx + 1) * BLOCK_SIZE, (gy + 1) * BLOCK_SIZE
         );
         gradient.addColorStop(0, "#ffffff");
         gradient.addColorStop(1, color);
 
-        drawCtx.fillStyle = gradient;
-        drawCtx.strokeStyle = "#222";
-        drawCtx.lineWidth = 2;
+        context.fillStyle = gradient;
+        context.strokeStyle = "#222";
+        context.lineWidth = 2;
+        context.shadowColor = "rgba(0, 0, 0, 0.4)";
+        context.shadowBlur = 6;
 
-        drawCtx.shadowColor = "rgba(0, 0, 0, 0.4)";
-        drawCtx.shadowBlur = 6;
+        context.fillRect(gx * BLOCK_SIZE, gy * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+        context.strokeRect(gx * BLOCK_SIZE, gy * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
 
-        drawCtx.fillRect(gx * BLOCK_SIZE, gy * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
-        drawCtx.strokeRect(gx * BLOCK_SIZE, gy * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
-
-        drawCtx.shadowColor = "transparent";
-        drawCtx.shadowBlur = 0;
+        context.shadowColor = "transparent";
+        context.shadowBlur = 0;
       }
     });
   });
@@ -132,33 +109,17 @@ function collide(board, piece, pos) {
 function merge(board, piece, pos) {
   piece.forEach((row, y) => {
     row.forEach((value, x) => {
-      if(value !== 0) {
-        board[y + pos.y][x + pos.x] = value;
-      }
+      if(value !== 0) board[y + pos.y][x + pos.x] = value;
     });
   });
+  playSound(somColidir);
 }
 
 function rotate(matrix, dir) {
-  const rows = matrix.length;
-  const cols = matrix[0].length;
-  const res = Array.from({ length: cols }, () => Array(rows).fill(0));
-
-  for (let y = 0; y < rows; ++y) {
-    for (let x = 0; x < cols; ++x) {
-      if (dir > 0) {
-        res[x][rows - 1 - y] = matrix[y][x]; // rotação horária
-      } else {
-        res[cols - 1 - x][y] = matrix[y][x]; // rotação anti-horária
-      }
-    }
-  }
-
-  // Atualiza a matriz original com o resultado
-  matrix.length = 0;
-  for (let row of res) {
-    matrix.push(row);
-  }
+  const res = matrix[0].map((_, i) => matrix.map(row => row[i]));
+  if (dir > 0) matrix = res.reverse();
+  else matrix = res.map(row => row.reverse());
+  return matrix;
 }
 
 function resetPiece() {
@@ -167,6 +128,7 @@ function resetPiece() {
   pos = {x: Math.floor(COLS/2) - Math.floor(currentPiece[0].length/2), y:0};
   if(collide(board, currentPiece, pos)) {
     gameOver = true;
+    playSound(somPerdeu);
     showGameOverModal();
   }
 }
@@ -180,9 +142,7 @@ function clearLines() {
   let lines = 0;
   outer: for(let y = board.length -1; y >= 0; y--) {
     for(let x = 0; x < COLS; x++) {
-      if(board[y][x] === 0) {
-        continue outer;
-      }
+      if(board[y][x] === 0) continue outer;
     }
     const row = board.splice(y, 1)[0].fill(0);
     board.unshift(row);
@@ -196,6 +156,7 @@ function clearLines() {
       level++;
       dropInterval *= 0.8;
     }
+    playSound(somPontos);
   }
   updateScore();
 }
@@ -206,11 +167,13 @@ function updateScore() {
 }
 
 function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#1a1a1a";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
   drawMatrix(board, {x:0, y:0});
-  if(currentPiece) {
-    drawMatrix(currentPiece, pos);
-  }
+  if(currentPiece) drawMatrix(currentPiece, pos);
+  ctx.strokeStyle = "#888";
+  ctx.lineWidth = 4;
+  ctx.strokeRect(0, 0, COLS * BLOCK_SIZE, ROWS * BLOCK_SIZE);
 }
 
 function drawNext() {
@@ -233,13 +196,16 @@ function drop() {
 
 function move(dir) {
   pos.x += dir;
-  if(collide(board, currentPiece, pos)) {
-    pos.x -= dir;
-  }
+  if(collide(board, currentPiece, pos)) pos.x -= dir;
 }
 
 function rotatePiece(dir) {
-  rotate(currentPiece, dir);  // roda diretamente a peça atual
+  currentPiece = rotate(currentPiece, dir);
+  if(collide(board, currentPiece, pos)) {
+    currentPiece = rotate(currentPiece, -dir);
+  } else {
+    playSound(somRodar);
+  }
 }
 
 function update(time = 0) {
@@ -249,9 +215,7 @@ function update(time = 0) {
   dropCounter += deltaTime;
   lastTime = time;
 
-  if(dropCounter > dropInterval) {
-    drop();
-  }
+  if(dropCounter > dropInterval) drop();
 
   const elapsed = Math.floor((time - startTime) / 1000);
   const minutes = String(Math.floor(elapsed / 60)).padStart(2, "0");
@@ -278,10 +242,20 @@ function startGame() {
   resetPiece();
   updateScore();
   update();
+  if (somAtivo) musicaFundo.play();
 }
 
-startBtn.addEventListener("click", () => {
-  startGame();
+startBtn.addEventListener("click", startGame);
+
+toggleSoundBtn.addEventListener("click", () => {
+  somAtivo = !somAtivo;
+  if (somAtivo) {
+    toggleSoundBtn.textContent = "🔊 Som";
+    musicaFundo.play();
+  } else {
+    toggleSoundBtn.textContent = "🔇 Silenciar";
+    musicaFundo.pause();
+  }
 });
 
 window.addEventListener("keydown", (e) => {
@@ -291,7 +265,7 @@ window.addEventListener("keydown", (e) => {
     case "ArrowRight": move(1); break;
     case "ArrowDown": drop(); break;
     case "ArrowUp": rotatePiece(1); break;
-    case " ": 
+    case " ":
       while(!collide(board, currentPiece, {x: pos.x, y: pos.y + 1})) {
         pos.y++;
       }
@@ -299,29 +273,6 @@ window.addEventListener("keydown", (e) => {
       break;
   }
 });
-
-function showGameOverModal() {
-  const modal = document.getElementById("modal");
-  const finalScore = document.getElementById("final-score");
-  finalScore.textContent = `Pontuação: ${score}`;
-  modal.classList.add("show");
-}
-
-function draw() {
-  // Fundo do tabuleiro
-  ctx.fillStyle = "#1a1a1a";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  drawMatrix(board, {x:0, y:0});
-  if(currentPiece) {
-    drawMatrix(currentPiece, pos);
-  }
-
-  // Borda
-  ctx.strokeStyle = "#888";
-  ctx.lineWidth = 4;
-  ctx.strokeRect(0, 0, COLS * BLOCK_SIZE, ROWS * BLOCK_SIZE);
-}
 
 document.getElementById("save-score-btn").addEventListener("click", () => {
   const name = document.getElementById("player-name").value.trim();
@@ -332,3 +283,10 @@ document.getElementById("save-score-btn").addEventListener("click", () => {
     alert("Por favor, insere o teu nome.");
   }
 });
+
+function showGameOverModal() {
+  const modal = document.getElementById("modal");
+  const finalScore = document.getElementById("final-score");
+  finalScore.textContent = `Pontuação: ${score}`;
+  modal.classList.add("show");
+}
