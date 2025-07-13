@@ -230,11 +230,7 @@ function move(dir) {
 }
 
 function rotatePiece(dir) {
-  const cloned = currentPiece.map(row => row.slice());
-  rotate(cloned, dir);
-  if(!collide(board, cloned, pos)) {
-    currentPiece = cloned;
-  }
+  rotate(currentPiece, dir);  // roda diretamente a peça atual
 }
 
 function update(time = 0) {
