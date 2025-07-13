@@ -1,53 +1,36 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-PT">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Desafio Pico-Pico - Tetris</title>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka&display=swap" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pico-Pico Bricks</title>
   <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka&display=swap" rel="stylesheet" />
 </head>
 <body>
-  <h1>Desafio Pico-Pico - Jogo Tetris</h1>
-  
-  <canvas id="board"></canvas>
-  <canvas id="next"></canvas>
-
-  <div id="info">
-    <p>Nível: <span id="level">1</span></p>
-    <p>Pontuação: <span id="score">0</span></p>
-    <p>Tempo: <span id="time">00:00</span></p>
-  </div>
-
-  <button id="startBtn">Iniciar Jogo</button>
-
-  <!-- Modal do jogo -->
-  <div id="modal" class="modal">
-    <div id="modal-content" class="modal-content">
-      <h2>Fim de Jogo</h2>
-      <p id="final-score">Pontuação: 0</p>
-      <div id="stars-container" style="margin: 10px 0;"></div>
-      <input
-        type="text"
-        id="player-name"
-        placeholder="Escreve o teu nome"
-        style="padding: 8px 12px; font-size: 16px; width: 80%; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ccc;"
-      />
-      <button
-        id="save-score-btn"
-        style="background:#fa8231; color:white; border:none; padding:10px 20px; border-radius:20px; cursor:pointer; font-weight:700; font-family: 'Fredoka', sans-serif; box-shadow: 0 5px 0 #d35400; margin-right: 10px;"
-      >
-        Guardar Pontuação
-      </button>
-      <button
-        id="share-score-btn"
-        style="background:#fa8231; color:white; border:none; padding:10px 20px; border-radius:20px; cursor:pointer; font-weight:700; font-family: 'Fredoka', sans-serif; box-shadow: 0 5px 0 #d35400;"
-      >
-        Partilhar Pontuação
-      </button>
+  <div id="game-container">
+    <h1>Tetris Pico-Pico</h1>
+    <canvas id="board" width="320" height="640"></canvas>
+    <div id="info">
+      <span>Nível: <span id="level">1</span></span>
+      <span>Pontuação: <span id="score">0</span></span>
+      <span>Tempo: <span id="time">00:00</span></span>
+    </div>
+    <canvas id="next" width="128" height="128"></canvas>
+    <div id="controls">
+      <button id="startBtn">Iniciar</button>
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <div id="modal">
+    <div id="modal-content">
+      <h2>Fim de Jogo!</h2>
+      <p id="final-score">Pontuação: 0</p>
+      <input type="text" id="player-name" placeholder="O teu nome" />
+      <button id="save-score-btn">Guardar Pontuação</button>
+    </div>
+  </div>
+
+  <script src="tetris.js"></script>
 </body>
 </html>
