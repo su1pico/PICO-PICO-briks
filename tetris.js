@@ -298,6 +298,22 @@ function showGameOverModal() {
   modal.classList.add("show");
 }
 
+function draw() {
+  // Fundo do tabuleiro
+  ctx.fillStyle = "#1a1a1a";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  drawMatrix(board, {x:0, y:0});
+  if(currentPiece) {
+    drawMatrix(currentPiece, pos);
+  }
+
+  // Borda
+  ctx.strokeStyle = "#888";
+  ctx.lineWidth = 4;
+  ctx.strokeRect(0, 0, COLS * BLOCK_SIZE, ROWS * BLOCK_SIZE);
+}
+
 document.getElementById("save-score-btn").addEventListener("click", () => {
   const name = document.getElementById("player-name").value.trim();
   if (name) {
