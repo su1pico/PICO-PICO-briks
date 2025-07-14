@@ -2,38 +2,43 @@
 <html lang="pt-PT">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PICO-PICO Bricks</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pico-Pico Bricks</title>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div id="game-container">
     <h1>Pico-Pico Bricks</h1>
+
     <canvas id="board" width="320" height="640"></canvas>
+    <canvas id="next" width="128" height="128"></canvas>
+
     <div id="info">
       <span>Nível: <span id="level">1</span></span>
       <span>Pontuação: <span id="score">0</span></span>
       <span>Tempo: <span id="time">00:00</span></span>
     </div>
-    <canvas id="next" width="128" height="128"></canvas>
+
     <div id="controls">
-      <div id="controls" class="controls">
-  <button id="leftBtn">◀</button>
-  <button id="rotateBtn">⟳</button>
-  <button id="rightBtn">▶</button>
-  <button id="downBtn">▼</button>
-  <button id="pauseBtn">⏸ Pausar</button>
-  <button id="resetBtn">🔄 Reiniciar</button>
-  <button id="startBtn">▶ Iniciar</button>
-  <button id="toggle-sound">🔊 Som</button>
+      <button id="startBtn">Iniciar</button>
+      <button id="resetBtn">🔄 Reiniciar</button>
+      <button id="toggle-sound">🔊 Som</button>
+    </div>
+
+    <div id="touch-controls">
+      <button id="leftBtn">←</button>
+      <button id="rightBtn">→</button>
+      <button id="downBtn">↓</button>
+      <button id="rotateBtn">⟳</button>
+      <button id="pauseBtn">⏸ Pausar</button>
     </div>
   </div>
-  
-<div id="ranking-container">
-  <h2>Top 10 Jogadores</h2>
-  <ul id="ranking-list"></ul>
-</div>
+
+  <div id="ranking-container">
+    <h2>Top 10 Jogadores</h2>
+    <ul id="ranking-list"></ul>
+  </div>
 
   <div id="modal">
     <div id="modal-content">
