@@ -10,13 +10,21 @@
 <body>
   <div id="game-container">
     <h1>Pico-Pico Bricks</h1>
+
     <canvas id="board" width="320" height="640"></canvas>
+    <canvas id="next" width="128" height="128"></canvas>
+
     <div id="info">
       <span>Nível: <span id="level">1</span></span>
       <span>Pontuação: <span id="score">0</span></span>
       <span>Tempo: <span id="time">00:00</span></span>
     </div>
-    <canvas id="next" width="128" height="128"></canvas>
+
+    <div id="controls">
+      <button id="startBtn">Iniciar</button>
+      <button id="resetBtn">🔄 Reiniciar</button>
+      <button id="toggle-sound">🔊 Som</button>
+    </div>
 
     <div id="touch-controls">
       <button id="leftBtn">←</button>
@@ -24,12 +32,6 @@
       <button id="downBtn">↓</button>
       <button id="rotateBtn">⟳</button>
       <button id="pauseBtn">⏸ Pausar</button>
-    </div>
-
-    <div id="controls">
-      <button id="startBtn">Iniciar</button>
-      <button id="resetBtn">🔄 Reiniciar</button>
-      <button id="toggle-sound">🔊 Som</button>
     </div>
   </div>
 
@@ -54,6 +56,6 @@
   <audio id="som-pontos" src="audio/pontos.mp3"></audio>
   <audio id="som-perdeu" src="audio/perdeu.mp3"></audio>
 
-  <script src="script.js"></script>
+  <script src="tetris.js"></script>
 </body>
 </html>
