@@ -159,7 +159,7 @@ function updateScore() {
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height); // limpa
-  ctx.fillStyle = "#fdf6e3"; // aplica fundo
+  ctx.fillStyle = "rgba(253, 246, 227, 0.25)"; // cor #fdf6e3 com 75% de opacidade
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   drawMatrix(board, { x: 0, y: 0 });
   if (currentPiece) drawMatrix(currentPiece, pos);
