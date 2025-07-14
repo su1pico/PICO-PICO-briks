@@ -29,8 +29,13 @@ nextCanvas.height = 4 * BLOCK_SIZE;
 
 const COLORS = [
   null,
-  "#FF5733", "#33FF57", "#3357FF", "#FF33A8",
-  "#33FFF5", "#F5FF33", "#FF8F33"
+  "#FF3CAC", // Rosa neon
+  "#784BA0", // Roxo suave
+  "#29FFC6", // Verde água neon
+  "#F8FF00", // Amarelo neon
+  "#00F0FF", // Azul ciano neon
+  "#FFB65C", // Laranja pastel
+  "#FF4E50"  // Vermelho coral
 ];
 
 const SHAPES = [
