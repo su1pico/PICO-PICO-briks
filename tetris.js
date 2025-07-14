@@ -306,11 +306,11 @@ function loadRanking() {
   const rankingList = document.getElementById("ranking-list");
   if (!rankingList) return;
   const scores = JSON.parse(localStorage.getItem("scores")) || [];
+  const medals = ["🥇", "🥈", "🥉"];
   rankingList.innerHTML = scores
-    .map((entry, i) => `<li>${i + 1}. ${entry.name} - ${entry.score}</li>`)
+    .map((entry, i) => `<li>${medals[i] || (i + 1)}. ${entry.name} - ${entry.score}</li>`)
     .join("");
 }
-
 loadRanking();
 
 // Botão visual de pausa
