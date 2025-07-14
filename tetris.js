@@ -278,12 +278,6 @@ window.addEventListener("keydown", (e) => {
     case "ArrowRight": move(1); break;
     case "ArrowDown": drop(); break;
     case "ArrowUp": rotatePiece(1); break;
-    case " ": // Hard drop
-      while (!collide(board, currentPiece, { x: pos.x, y: pos.y + 1 })) {
-        pos.y++;
-      }
-      drop();
-      break;
   }
 });
 
