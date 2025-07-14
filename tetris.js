@@ -68,21 +68,15 @@ function drawMatrix(matrix, offset, context = ctx) {
         const gy = (y + offset.y);
         const gradient = context.createLinearGradient(
           gx * BLOCK_SIZE, gy * BLOCK_SIZE,
-          (gx + 1) * BLOCK_SIZE, (gy + 1) * BLOCK_SIZE
+          gx * BLOCK_SIZE, gy * BLOCK_SIZE + BLOCK_SIZE
         );
-        gradient.addColorStop(0, "#ffffff");
-        gradient.addColorStop(1, color);
-
+        gradient.addColorStop(0, color);
+        gradient.addColorStop(1, "#000000");
         context.fillStyle = gradient;
-        context.strokeStyle = "#222";
+        context.strokeStyle = "rgba(0,0,0,0.6)";
         context.lineWidth = 2;
-        context.shadowColor = "rgba(0, 0, 0, 0.4)";
-        context.shadowBlur = 6;
-
         context.fillRect(gx * BLOCK_SIZE, gy * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
         context.strokeRect(gx * BLOCK_SIZE, gy * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
-        context.shadowColor = "transparent";
-        context.shadowBlur = 0;
       }
     });
   });
@@ -91,7 +85,8 @@ function drawMatrix(matrix, offset, context = ctx) {
 function collide(board, piece, pos) {
   for (let y = 0; y < piece.length; y++) {
     for (let x = 0; x < piece[y].length; x++) {
-      if (piece[y][x] !== 0 && (board[y + pos.y] && board[y + pos.y][x + pos.x]) !== 0) {
+      if (piece[y][x] !== 0 &&
+         (board[y + pos.y] && board[y + pos.y][x + pos.x]) !== 0) {
         return true;
       }
     }
@@ -102,21 +97,36 @@ function collide(board, piece, pos) {
 function merge(board, piece, pos) {
   piece.forEach((row, y) => {
     row.forEach((value, x) => {
-      if (value !== 0) board[y + pos.y][x + pos.x] = value;
+      if (value !== 0) {
+        board[y + pos.y][x + pos.x] = value;
+      }
     });
   });
   playSound(somColidir);
 }
 
 function rotate(matrix, dir) {
-  const res = matrix[0].map((_, i) => matrix.map(row => row[i]));
-  return dir > 0 ? res.reverse() : res.map(row => row.reverse());
+  // Transpose
+  for (let y = 0; y < matrix.length; y++) {
+    for (let x = 0; x < y; x++) {
+      [matrix[x][y], matrix[y][x]] = [matrix[y][x], matrix[x][y]];
+    }
+  }
+  if (dir > 0) {
+    matrix.forEach(row => row.reverse());
+  } else {
+    matrix.reverse();
+  }
+  return matrix;
 }
 
 function resetPiece() {
   currentPiece = nextPiece;
   nextPiece = randomPiece();
-  pos = { x: Math.floor(COLS / 2) - Math.floor(currentPiece[0].length / 2), y: 0 };
+  pos = {
+    x: Math.floor(COLS / 2) - Math.floor(currentPiece[0].length / 2),
+    y: 0
+  };
   if (collide(board, currentPiece, pos)) {
     gameOver = true;
     playSound(somPerdeu);
@@ -131,7 +141,7 @@ function randomPiece() {
 
 function clearLines() {
   let lines = 0;
-  outer: for (let y = board.length - 1; y >= 0; y--) {
+  outer: for (let y = board.length -1; y >= 0; y--) {
     for (let x = 0; x < COLS; x++) {
       if (board[y][x] === 0) continue outer;
     }
@@ -142,80 +152,106 @@ function clearLines() {
   }
   if (lines > 0) {
     linesCleared += lines;
-    score += lines * 100 * level;
-    if (linesCleared >= level * 10) {
-      level++;
-      dropInterval *= 0.8;
-    }
+    score += lines * lines * 100;
+    level = Math.min(10, Math.floor(linesCleared / 10) + 1);
     playSound(somPontos);
+    updateInfo();
+    dropInterval = 1000 - (level - 1) * 80;
   }
-  updateScore();
 }
 
-function updateScore() {
-  scoreEl.textContent = score;
+function updateInfo() {
   levelEl.textContent = level;
+  scoreEl.textContent = score;
+}
+
+function updateTime() {
+  const elapsed = Date.now() - startTime;
+  const min = Math.floor(elapsed / 60000);
+  const sec = Math.floor((elapsed % 60000) / 1000);
+  timeEl.textContent = `${min.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`;
 }
 
 function draw() {
-  ctx.fillStyle = "#1a1a1a";
+  ctx.fillStyle = "rgba(50, 50, 100, 0.3)";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
+
   drawMatrix(board, { x: 0, y: 0 });
-  if (currentPiece) drawMatrix(currentPiece, pos);
-  ctx.strokeStyle = "#888";
-  ctx.lineWidth = 4;
-  ctx.strokeRect(0, 0, COLS * BLOCK_SIZE, ROWS * BLOCK_SIZE);
+  drawMatrix(currentPiece, pos);
+
+  drawNext();
 }
 
 function drawNext() {
-  nextCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
+  nextCtx.fillStyle = "rgba(20, 20, 40, 0.6)";
+  nextCtx.fillRect(0, 0, nextCanvas.width, nextCanvas.height);
   const offsetX = Math.floor((4 - nextPiece[0].length) / 2);
   const offsetY = Math.floor((4 - nextPiece.length) / 2);
   drawMatrix(nextPiece, { x: offsetX, y: offsetY }, nextCtx);
 }
 
 function drop() {
+  if (paused || gameOver) return;
   pos.y++;
   if (collide(board, currentPiece, pos)) {
     pos.y--;
     merge(board, currentPiece, pos);
-    clearLines();
     resetPiece();
+    clearLines();
   }
   dropCounter = 0;
 }
 
 function move(dir) {
+  if (paused || gameOver) return;
   pos.x += dir;
-  if (collide(board, currentPiece, pos)) pos.x -= dir;
-}
-
-function rotatePiece(dir) {
-  currentPiece = rotate(currentPiece, dir);
   if (collide(board, currentPiece, pos)) {
-    currentPiece = rotate(currentPiece, -dir);
-  } else {
-    playSound(somRodar);
+    pos.x -= dir;
   }
 }
 
+function hardDrop() {
+  if (paused || gameOver) return;
+  while (!collide(board, currentPiece, { x: pos.x, y: pos.y + 1 })) {
+    pos.y++;
+  }
+  merge(board, currentPiece, pos);
+  resetPiece();
+  clearLines();
+  dropCounter = 0;
+}
+
+function rotatePiece(dir) {
+  if (paused || gameOver) return;
+  const rotated = rotate(currentPiece.map(row => row.slice()), dir);
+  const oldX = pos.x;
+  let offset = 0;
+  while (collide(board, rotated, { x: pos.x, y: pos.y })) {
+    pos.x += (offset = -(offset > 0 ? offset : -offset + 1));
+    if (offset > rotated[0].length) {
+      pos.x = oldX;
+      return;
+    }
+  }
+  currentPiece = rotated;
+  playSound(somRodar);
+}
+
 function update(time = 0) {
-  if (gameOver || paused) return;
-
-  if (!startTime) startTime = time;
+  if (gameOver) {
+    cancelAnimationFrame(animationId);
+    return;
+  }
   const deltaTime = time - lastTime;
-  dropCounter += deltaTime;
   lastTime = time;
-
-  if (dropCounter > dropInterval) drop();
-
-  const elapsed = Math.floor((time - startTime) / 1000);
-  const minutes = String(Math.floor(elapsed / 60)).padStart(2, "0");
-  const seconds = String(elapsed % 60).padStart(2, "0");
-  timeEl.textContent = `${minutes}:${seconds}`;
-
+  if (!paused) {
+    dropCounter += deltaTime;
+    if (dropCounter > dropInterval) {
+      drop();
+    }
+    updateTime();
+  }
   draw();
-  drawNext();
   animationId = requestAnimationFrame(update);
 }
 
@@ -228,105 +264,138 @@ function startGame() {
   dropCounter = 0;
   lastTime = 0;
   gameOver = false;
-  startTime = null;
   paused = false;
-
+  startTime = Date.now();
   nextPiece = randomPiece();
   resetPiece();
-  updateScore();
-  if (somAtivo) musicaFundo.play();
+  updateInfo();
+  updateTime();
+  musicaFundo.play();
   animationId = requestAnimationFrame(update);
 }
 
-function resetGame() {
-  cancelAnimationFrame(animationId);
-  musicaFundo.currentTime = 0;
-  startGame();
-}
-
-function togglePause() {
+function pauseGame() {
   paused = !paused;
   if (paused) {
-    cancelAnimationFrame(animationId);
     musicaFundo.pause();
+    pauseBtn.textContent = "▶️ Continuar";
   } else {
+    musicaFundo.play();
+    pauseBtn.textContent = "⏸ Pausar";
     lastTime = performance.now();
-    if (somAtivo) musicaFundo.play();
     animationId = requestAnimationFrame(update);
   }
 }
 
-startBtn.addEventListener("click", startGame);
-document.getElementById("resetBtn").addEventListener("click", resetGame);
+function resetGame() {
+  musicaFundo.pause();
+  musicaFundo.currentTime = 0;
+  cancelAnimationFrame(animationId);
+  gameOver = true;
+  paused = false;
+  draw();
+  updateInfo();
+  updateTime();
+  clearModal();
+}
 
-toggleSoundBtn.addEventListener("click", () => {
+const modal = document.getElementById("modal");
+const finalScore = document.getElementById("final-score");
+const playerNameInput = document.getElementById("player-name");
+const saveScoreBtn = document.getElementById("save-score-btn");
+const rankingList = document.getElementById("ranking-list");
+
+function showGameOverModal() {
+  finalScore.textContent = `Pontuação: ${score}`;
+  modal.classList.add("show");
+  playerNameInput.value = "";
+  playerNameInput.focus();
+  musicaFundo.pause();
+}
+
+function clearModal() {
+  modal.classList.remove("show");
+}
+
+function saveScore() {
+  const name = playerNameInput.value.trim();
+  if (!name) {
+    alert("Por favor, insere um nome válido.");
+    playerNameInput.focus();
+    return;
+  }
+  let ranking = JSON.parse(localStorage.getItem("picoPicoRanking") || "[]");
+  ranking.push({ name, score });
+  ranking.sort((a,b) => b.score - a.score);
+  ranking = ranking.slice(0, 10);
+  localStorage.setItem("picoPicoRanking", JSON.stringify(ranking));
+  updateRankingDisplay();
+  clearModal();
+}
+
+function updateRankingDisplay() {
+  let ranking = JSON.parse(localStorage.getItem("picoPicoRanking") || "[]");
+  rankingList.innerHTML = ranking
+    .map((item, i) => `<li>${i+1}. ${item.name} - ${item.score} pts</li>`)
+    .join("");
+}
+
+startBtn.addEventListener("click", () => {
+  startGame();
+});
+
+document.getElementById("resetBtn").addEventListener("click", () => {
+  resetGame();
+});
+
+document.getElementById("toggle-sound").addEventListener("click", () => {
   somAtivo = !somAtivo;
-  toggleSoundBtn.textContent = somAtivo ? "🔊 Som" : "🔇 Silenciar";
-  if (somAtivo) musicaFundo.play();
+  toggleSoundBtn.textContent = somAtivo ? "🔊 Som" : "🔇 Mudo";
+  if (somAtivo && !paused && !gameOver) musicaFundo.play();
   else musicaFundo.pause();
 });
 
-window.addEventListener("keydown", (e) => {
-  if (gameOver) return;
-  if (e.key === "p" || e.key === "P") {
-    togglePause();
-    return;
-  }
+const pauseBtn = document.getElementById("pauseBtn");
+pauseBtn.addEventListener("click", () => {
+  if (!gameOver) pauseGame();
+});
+
+saveScoreBtn.addEventListener("click", saveScore);
+
+playerNameInput.addEventListener("keydown", e => {
+  if (e.key === "Enter") saveScore();
+});
+
+window.addEventListener("keydown", e => {
+  if (gameOver || paused) return;
+
   switch (e.key) {
-    case "ArrowLeft": move(-1); break;
-    case "ArrowRight": move(1); break;
-    case "ArrowDown": drop(); break;
-    case "ArrowUp": rotatePiece(1); break;
-    case " ": // Hard drop
-      while (!collide(board, currentPiece, { x: pos.x, y: pos.y + 1 })) {
-        pos.y++;
-      }
+    case "ArrowLeft":
+      move(-1);
+      break;
+    case "ArrowRight":
+      move(1);
+      break;
+    case "ArrowDown":
       drop();
+      break;
+    case "ArrowUp":
+      rotatePiece(1);
+      break;
+    case " ":
+      e.preventDefault();
+      hardDrop();
+      break;
+    case "p":
+    case "P":
+      pauseGame();
       break;
   }
 });
 
-document.getElementById("save-score-btn").addEventListener("click", () => {
-  const name = document.getElementById("player-name").value.trim();
-  if (name) {
-    const scores = JSON.parse(localStorage.getItem("scores")) || [];
-    scores.push({ name, score });
-    scores.sort((a, b) => b.score - a.score);
-    scores.splice(10);
-    localStorage.setItem("scores", JSON.stringify(scores));
-    location.reload();
-  } else {
-    alert("Por favor, insere o teu nome.");
-  }
-});
-
-function showGameOverModal() {
-  const modal = document.getElementById("modal");
-  const finalScore = document.getElementById("final-score");
-  finalScore.textContent = `Pontuação: ${score}`;
-  modal.classList.add("show");
-}
-
-function loadRanking() {
-  const rankingList = document.getElementById("ranking-list");
-  if (!rankingList) return;
-  const scores = JSON.parse(localStorage.getItem("scores")) || [];
-  rankingList.innerHTML = scores
-    .map((entry, i) => `<li>${i + 1}. ${entry.name} - ${entry.score}</li>`)
-    .join("");
-}
-
-loadRanking();
-
-// Botão visual de pausa
-document.getElementById("pauseBtn").addEventListener("click", () => {
-  togglePause();
-  const btn = document.getElementById("pauseBtn");
-  btn.textContent = paused ? "▶ Retomar" : "⏸ Pausar";
-});
-
-// Controles táteis
 document.getElementById("leftBtn").addEventListener("click", () => move(-1));
 document.getElementById("rightBtn").addEventListener("click", () => move(1));
-document.getElementById("downBtn").addEventListener("click", drop);
+document.getElementById("downBtn").addEventListener("click", () => drop());
 document.getElementById("rotateBtn").addEventListener("click", () => rotatePiece(1));
+
+updateRankingDisplay();
