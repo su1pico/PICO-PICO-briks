@@ -158,7 +158,7 @@ function updateScore() {
 }
 
 function draw() {
-  ctx.fillStyle = "#1a1a1a";
+  ctx.fillStyle = "transparent";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   drawMatrix(board, { x: 0, y: 0 });
   if (currentPiece) drawMatrix(currentPiece, pos);
