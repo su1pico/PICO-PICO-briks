@@ -1,151 +1,220 @@
+/* Reset e básico */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 body {
-  background: #ffc043;
+  background: url('capadojogo.png') no-repeat center center fixed;
+  background-size: contain; /* OU 'cover' se quiseres preencher tudo */
   font-family: 'Fredoka', sans-serif;
-  color: #222;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  color: #333;
+  user-select: none;
+}
+
+canvas {
+  background-color: transparent !important;
+  display: block;
+  margin: 0 auto;
+}
+
+#game-container {
   text-align: center;
-  margin: 20px;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.9);
+  max-width: 420px;
+  margin: 0 auto;
+  border-radius: 16px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.2);
 }
 
 h1 {
-  font-weight: 900;
-  font-size: 3rem;
-  text-shadow: 2px 2px 0 #fa8231;
-  margin-bottom: 10px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  font-size: 2.5rem;
+  color: #fa8231;
+  text-shadow: 2px 2px #f7b731;
 }
 
-#board, #next {
-  display: block;
-  margin: 10px auto;
-  border-radius: 10px;
-  box-shadow: 0 0 20px #fa8231;
-  background-color: #1a1a1a;
+#game {
+  background: rgba(255, 255, 255, 0.9);
+  border: 5px solid #fa8231;
+  border-radius: 20px;
+  padding: 15px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.2);
+  margin: 0 auto 15px;
+  width: 320px;
+}
+
+#info {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 15px;
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #fa8231;
+  text-shadow: 1px 1px #f7b731;
 }
 
 #next {
-  background-color: #222;
-  box-shadow: 0 0 10px #fa8231;
-  border-radius: 8px;
+  background: #222;
+  border-radius: 10px;
+  box-shadow: inset 0 0 10px #f7b731;
+  margin-left: 10px;
 }
 
-#info p {
-  font-size: 1.2rem;
-  font-weight: 700;
-  margin: 5px;
+#controls {
+  margin-top: 10px;
 }
 
-#startBtn, #toggle-music {
-  margin: 10px 5px;
-  padding: 12px 30px;
-  border-radius: 30px;
+button {
+  background: #fa8231;
   border: none;
-  background-color: #fa8231;
+  padding: 10px 20px;
+  margin: 5px;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  border-radius: 30px;
   color: white;
-  font-weight: 900;
-  font-size: 1.4rem;
   cursor: pointer;
-  box-shadow: 0 6px 0 #d35400;
-  transition: background-color 0.3s ease;
+  box-shadow: 0 5px 0 #d35400;
+  transition: background 0.3s ease;
 }
 
-#startBtn:hover, #toggle-music:hover {
-  background-color: #e67328;
+button:hover {
+  background: #f7b731;
+  color: #222;
 }
 
-#startBtn:active, #toggle-music:active,
-#save-score-btn:active, #share-score-btn:active {
+button:active {
+  box-shadow: none;
   transform: translateY(2px);
-  box-shadow: 0 3px 0 #b34300;
 }
 
-.modal {
+#modal {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.6);
+  background-color: rgba(0,0,0,0.5);
   display: none;
-  justify-content: center;
   align-items: center;
-  z-index: 999;
+  justify-content: center;
 }
 
-.modal.show {
-  display: flex;
+#modal.show {
+  opacity: 1;
+  pointer-events: auto;
 }
 
-.modal-content {
+#modal-content {
   background: white;
-  padding: 30px;
+  padding: 25px 35px;
   border-radius: 15px;
   width: 90%;
-  max-width: 400px;
-  box-shadow: 0 0 30px #fa8231;
-  font-weight: 700;
-  color: #222;
+  max-width: 320px;
   text-align: center;
-  animation: fadeIn 0.4s ease;
+  animation: modalPop 0.4s ease forwards;
+  box-shadow: 0 8px 25px rgba(250, 130, 49, 0.6);
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.9); }
-  to { opacity: 1; transform: scale(1); }
+@keyframes modalPop {
+  from {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+#modal-content h2 {
+  margin-bottom: 15px;
+  color: #fa8231;
+  text-shadow: 1px 1px #f7b731;
+}
+
+#modal-content p {
+  font-weight: 700;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
 }
 
 #player-name {
-  padding: 8px 12px;
-  font-size: 16px;
   width: 80%;
+  padding: 8px;
+  font-size: 1.1rem;
+  border-radius: 10px;
+  border: 2px solid #fa8231;
   margin-bottom: 15px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-}
-
-#save-score-btn, #share-score-btn {
+  outline-color: #f7b731;
   font-family: 'Fredoka', sans-serif;
   font-weight: 700;
-  font-size: 1rem;
-  padding: 10px 20px;
-  border-radius: 20px;
+  text-align: center;
+}
+
+#save-score-btn {
+  background: #fa8231;
+  padding: 10px 25px;
+  border-radius: 30px;
   border: none;
-  background-color: #fa8231;
+  font-weight: 700;
+  font-size: 1.1rem;
   color: white;
   cursor: pointer;
   box-shadow: 0 5px 0 #d35400;
-  transition: background-color 0.3s ease;
-  margin: 5px;
+  transition: background 0.3s ease;
+  font-family: 'Fredoka', sans-serif;
 }
 
-#save-score-btn:hover, #share-score-btn:hover {
-  background-color: #e67328;
+#save-score-btn:hover {
+  background: #f7b731;
+  color: #222;
 }
 
-#stars-container {
-  display: flex;
-  justify-content: center;
-  gap: 5px;
-  margin: 10px 0;
+#save-score-btn:active {
+  box-shadow: none;
+  transform: translateY(2px);
 }
 
-.star {
-  width: 40px;
-  height: 40px;
-  fill: #fa8231;
-  filter: drop-shadow(1px 1px 1px #d35400);
-}
+/* Responsivo */
+@media (max-width: 480px) {
+  #game-container {
+    padding: 15px;
+  }
 
-@media (max-width: 600px) {
   h1 {
     font-size: 2rem;
   }
 
-  #startBtn, #toggle-music {
-    font-size: 1.2rem;
-    padding: 10px 20px;
+  #info {
+    font-size: 1rem;
+    flex-direction: column;
+    gap: 5px;
   }
 
-  .star {
-    width: 30px;
-    height: 30px;
+  #game {
+    width: 280px !important;
+    height: 560px !important;
+  }
+
+  #next {
+    width: 100px !important;
+    height: 100px !important;
+    margin-left: 0;
+    margin-top: 10px;
+  }
+
+  button {
+    width: 100%;
+    margin: 5px 0;
   }
 }
