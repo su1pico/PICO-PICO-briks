@@ -16,6 +16,7 @@ const somPontos = document.getElementById("som-pontos");
 const somPerdeu = document.getElementById("som-perdeu");
 
 let somAtivo = true;
+let paused = false;
 
 const COLS = 10;
 const ROWS = 20;
@@ -23,19 +24,13 @@ const BLOCK_SIZE = 32;
 
 canvas.width = COLS * BLOCK_SIZE;
 canvas.height = ROWS * BLOCK_SIZE;
-
 nextCanvas.width = 4 * BLOCK_SIZE;
 nextCanvas.height = 4 * BLOCK_SIZE;
 
 const COLORS = [
   null,
-  "#FF5733",
-  "#33FF57",
-  "#3357FF",
-  "#FF33A8",
-  "#33FFF5",
-  "#F5FF33",
-  "#FF8F33",
+  "#FF5733", "#33FF57", "#3357FF", "#FF33A8",
+  "#33FFF5", "#F5FF33", "#FF8F33"
 ];
 
 const SHAPES = [
@@ -51,6 +46,7 @@ const SHAPES = [
 
 let board, currentPiece, nextPiece, pos, score, level, linesCleared;
 let dropInterval, dropCounter, lastTime, gameOver, startTime;
+let animationId = null;
 
 function playSound(audio) {
   if (somAtivo) {
@@ -60,9 +56,7 @@ function playSound(audio) {
 }
 
 function createMatrix(w, h) {
-  const matrix = [];
-  for(let y=0; y<h; y++) matrix.push(new Array(w).fill(0));
-  return matrix;
+  return Array.from({ length: h }, () => Array(w).fill(0));
 }
 
 function drawMatrix(matrix, offset, context = ctx) {
@@ -87,7 +81,6 @@ function drawMatrix(matrix, offset, context = ctx) {
 
         context.fillRect(gx * BLOCK_SIZE, gy * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
         context.strokeRect(gx * BLOCK_SIZE, gy * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
-
         context.shadowColor = "transparent";
         context.shadowBlur = 0;
       }
@@ -96,9 +89,9 @@ function drawMatrix(matrix, offset, context = ctx) {
 }
 
 function collide(board, piece, pos) {
-  for(let y=0; y<piece.length; y++) {
-    for(let x=0; x<piece[y].length; x++) {
-      if(piece[y][x] !== 0 && (board[y + pos.y] && board[y + pos.y][x + pos.x]) !== 0) {
+  for (let y = 0; y < piece.length; y++) {
+    for (let x = 0; x < piece[y].length; x++) {
+      if (piece[y][x] !== 0 && (board[y + pos.y] && board[y + pos.y][x + pos.x]) !== 0) {
         return true;
       }
     }
@@ -109,7 +102,7 @@ function collide(board, piece, pos) {
 function merge(board, piece, pos) {
   piece.forEach((row, y) => {
     row.forEach((value, x) => {
-      if(value !== 0) board[y + pos.y][x + pos.x] = value;
+      if (value !== 0) board[y + pos.y][x + pos.x] = value;
     });
   });
   playSound(somColidir);
@@ -117,16 +110,14 @@ function merge(board, piece, pos) {
 
 function rotate(matrix, dir) {
   const res = matrix[0].map((_, i) => matrix.map(row => row[i]));
-  if (dir > 0) matrix = res.reverse();
-  else matrix = res.map(row => row.reverse());
-  return matrix;
+  return dir > 0 ? res.reverse() : res.map(row => row.reverse());
 }
 
 function resetPiece() {
   currentPiece = nextPiece;
   nextPiece = randomPiece();
-  pos = {x: Math.floor(COLS/2) - Math.floor(currentPiece[0].length/2), y:0};
-  if(collide(board, currentPiece, pos)) {
+  pos = { x: Math.floor(COLS / 2) - Math.floor(currentPiece[0].length / 2), y: 0 };
+  if (collide(board, currentPiece, pos)) {
     gameOver = true;
     playSound(somPerdeu);
     showGameOverModal();
@@ -134,25 +125,25 @@ function resetPiece() {
 }
 
 function randomPiece() {
-  const index = Math.floor(Math.random() * (SHAPES.length -1)) +1;
+  const index = Math.floor(Math.random() * (SHAPES.length - 1)) + 1;
   return SHAPES[index].map(row => row.slice());
 }
 
 function clearLines() {
   let lines = 0;
-  outer: for(let y = board.length -1; y >= 0; y--) {
-    for(let x = 0; x < COLS; x++) {
-      if(board[y][x] === 0) continue outer;
+  outer: for (let y = board.length - 1; y >= 0; y--) {
+    for (let x = 0; x < COLS; x++) {
+      if (board[y][x] === 0) continue outer;
     }
     const row = board.splice(y, 1)[0].fill(0);
     board.unshift(row);
     lines++;
     y++;
   }
-  if(lines > 0) {
+  if (lines > 0) {
     linesCleared += lines;
     score += lines * 100 * level;
-    if(linesCleared >= level * 10) {
+    if (linesCleared >= level * 10) {
       level++;
       dropInterval *= 0.8;
     }
@@ -169,8 +160,8 @@ function updateScore() {
 function draw() {
   ctx.fillStyle = "#1a1a1a";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  drawMatrix(board, {x:0, y:0});
-  if(currentPiece) drawMatrix(currentPiece, pos);
+  drawMatrix(board, { x: 0, y: 0 });
+  if (currentPiece) drawMatrix(currentPiece, pos);
   ctx.strokeStyle = "#888";
   ctx.lineWidth = 4;
   ctx.strokeRect(0, 0, COLS * BLOCK_SIZE, ROWS * BLOCK_SIZE);
@@ -180,12 +171,12 @@ function drawNext() {
   nextCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
   const offsetX = Math.floor((4 - nextPiece[0].length) / 2);
   const offsetY = Math.floor((4 - nextPiece.length) / 2);
-  drawMatrix(nextPiece, {x: offsetX, y: offsetY}, nextCtx);
+  drawMatrix(nextPiece, { x: offsetX, y: offsetY }, nextCtx);
 }
 
 function drop() {
   pos.y++;
-  if(collide(board, currentPiece, pos)) {
+  if (collide(board, currentPiece, pos)) {
     pos.y--;
     merge(board, currentPiece, pos);
     clearLines();
@@ -196,12 +187,12 @@ function drop() {
 
 function move(dir) {
   pos.x += dir;
-  if(collide(board, currentPiece, pos)) pos.x -= dir;
+  if (collide(board, currentPiece, pos)) pos.x -= dir;
 }
 
 function rotatePiece(dir) {
   currentPiece = rotate(currentPiece, dir);
-  if(collide(board, currentPiece, pos)) {
+  if (collide(board, currentPiece, pos)) {
     currentPiece = rotate(currentPiece, -dir);
   } else {
     playSound(somRodar);
@@ -209,13 +200,14 @@ function rotatePiece(dir) {
 }
 
 function update(time = 0) {
-  if(gameOver) return;
-  if(!startTime) startTime = time;
+  if (gameOver || paused) return;
+
+  if (!startTime) startTime = time;
   const deltaTime = time - lastTime;
   dropCounter += deltaTime;
   lastTime = time;
 
-  if(dropCounter > dropInterval) drop();
+  if (dropCounter > dropInterval) drop();
 
   const elapsed = Math.floor((time - startTime) / 1000);
   const minutes = String(Math.floor(elapsed / 60)).padStart(2, "0");
@@ -224,7 +216,7 @@ function update(time = 0) {
 
   draw();
   drawNext();
-  requestAnimationFrame(update);
+  animationId = requestAnimationFrame(update);
 }
 
 function startGame() {
@@ -237,36 +229,56 @@ function startGame() {
   lastTime = 0;
   gameOver = false;
   startTime = null;
+  paused = false;
 
   nextPiece = randomPiece();
   resetPiece();
   updateScore();
-  update();
   if (somAtivo) musicaFundo.play();
+  animationId = requestAnimationFrame(update);
+}
+
+function resetGame() {
+  cancelAnimationFrame(animationId);
+  musicaFundo.currentTime = 0;
+  startGame();
+}
+
+function togglePause() {
+  paused = !paused;
+  if (paused) {
+    cancelAnimationFrame(animationId);
+    musicaFundo.pause();
+  } else {
+    lastTime = performance.now();
+    if (somAtivo) musicaFundo.play();
+    animationId = requestAnimationFrame(update);
+  }
 }
 
 startBtn.addEventListener("click", startGame);
+document.getElementById("resetBtn").addEventListener("click", resetGame);
 
 toggleSoundBtn.addEventListener("click", () => {
   somAtivo = !somAtivo;
-  if (somAtivo) {
-    toggleSoundBtn.textContent = "🔊 Som";
-    musicaFundo.play();
-  } else {
-    toggleSoundBtn.textContent = "🔇 Silenciar";
-    musicaFundo.pause();
-  }
+  toggleSoundBtn.textContent = somAtivo ? "🔊 Som" : "🔇 Silenciar";
+  if (somAtivo) musicaFundo.play();
+  else musicaFundo.pause();
 });
 
 window.addEventListener("keydown", (e) => {
-  if(gameOver) return;
-  switch(e.key) {
+  if (gameOver) return;
+  if (e.key === "p" || e.key === "P") {
+    togglePause();
+    return;
+  }
+  switch (e.key) {
     case "ArrowLeft": move(-1); break;
     case "ArrowRight": move(1); break;
     case "ArrowDown": drop(); break;
     case "ArrowUp": rotatePiece(1); break;
-    case " ":
-      while(!collide(board, currentPiece, {x: pos.x, y: pos.y + 1})) {
+    case " ": // Hard drop
+      while (!collide(board, currentPiece, { x: pos.x, y: pos.y + 1 })) {
         pos.y++;
       }
       drop();
@@ -277,7 +289,11 @@ window.addEventListener("keydown", (e) => {
 document.getElementById("save-score-btn").addEventListener("click", () => {
   const name = document.getElementById("player-name").value.trim();
   if (name) {
-    alert(`Pontuação de ${name} guardada com sucesso! (simulado)`);
+    const scores = JSON.parse(localStorage.getItem("scores")) || [];
+    scores.push({ name, score });
+    scores.sort((a, b) => b.score - a.score);
+    scores.splice(10);
+    localStorage.setItem("scores", JSON.stringify(scores));
     location.reload();
   } else {
     alert("Por favor, insere o teu nome.");
@@ -290,3 +306,14 @@ function showGameOverModal() {
   finalScore.textContent = `Pontuação: ${score}`;
   modal.classList.add("show");
 }
+
+function loadRanking() {
+  const rankingList = document.getElementById("ranking-list");
+  if (!rankingList) return;
+  const scores = JSON.parse(localStorage.getItem("scores")) || [];
+  rankingList.innerHTML = scores
+    .map((entry, i) => `<li>${i + 1}. ${entry.name} - ${entry.score}</li>`)
+    .join("");
+}
+
+loadRanking();
