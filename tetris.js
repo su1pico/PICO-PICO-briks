@@ -317,3 +317,16 @@ function loadRanking() {
 }
 
 loadRanking();
+
+// Botão visual de pausa
+document.getElementById("pauseBtn").addEventListener("click", () => {
+  togglePause();
+  const btn = document.getElementById("pauseBtn");
+  btn.textContent = paused ? "▶ Retomar" : "⏸ Pausar";
+});
+
+// Controles táteis
+document.getElementById("leftBtn").addEventListener("click", () => move(-1));
+document.getElementById("rightBtn").addEventListener("click", () => move(1));
+document.getElementById("downBtn").addEventListener("click", drop);
+document.getElementById("rotateBtn").addEventListener("click", () => rotatePiece(1));
