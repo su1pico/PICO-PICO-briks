@@ -158,7 +158,8 @@ function updateScore() {
 }
 
 function draw() {
-  ctx.fillStyle = "transparent";
+  ctx.clearRect(0, 0, canvas.width, canvas.height); // limpa
+  ctx.fillStyle = "#fdf6e3"; // aplica fundo
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   drawMatrix(board, { x: 0, y: 0 });
   if (currentPiece) drawMatrix(currentPiece, pos);
