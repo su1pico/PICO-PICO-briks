@@ -1,43 +1,44 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-PT">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Desafio Pico-Pico - Tetris</title>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka&display=swap" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pico-Pico Bricks</title>
   <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka&display=swap" rel="stylesheet" />
 </head>
 <body>
-  <h1>Desafio Pico-Pico - Jogo Tetris</h1>
-
-  <canvas id="board"></canvas>
-  <canvas id="next"></canvas>
-
-  <div id="info">
-    <p>Nível: <span id="level">1</span></p>
-    <p>Pontuação: <span id="score">0</span></p>
-    <p>Tempo: <span id="time">00:00</span></p>
-  </div>
-
-  <button id="startBtn">Iniciar Jogo</button>
-  <button id="toggle-music">🔊</button>
-
-  <!-- Modal -->
-  <div id="modal" class="modal">
-    <div id="modal-content" class="modal-content">
-      <h2>Fim de Jogo</h2>
-      <p id="final-score">Pontuação: 0</p>
-      <div id="stars-container"></div>
-      <input type="text" id="player-name" placeholder="Escreve o teu nome" />
-      <button id="save-score-btn">Guardar Pontuação</button>
-      <button id="share-score-btn">Partilhar Pontuação</button>
+  <div id="game-container">
+    <h1>Pico-Pico Bricks</h1>
+    <canvas id="board" width="320" height="640"></canvas>
+    <div id="info">
+      <span>Nível: <span id="level">1</span></span>
+      <span>Pontuação: <span id="score">0</span></span>
+      <span>Tempo: <span id="time">00:00</span></span>
+    </div>
+    <canvas id="next" width="128" height="128"></canvas>
+    <div id="controls">
+      <button id="startBtn">Iniciar</button>
+      <button id="toggle-sound">🔊 Som</button>
     </div>
   </div>
 
-  <audio id="bg-music" src="audio/bg-music.mp3" loop></audio>
-  <audio id="gameover-sound" src="audio/gameover.mp3"></audio>
-  <audio id="win-sound" src="audio/win.mp3"></audio>
+  <div id="modal">
+    <div id="modal-content">
+      <h2>Fim de Jogo!</h2>
+      <p id="final-score">Pontuação: 0</p>
+      <input type="text" id="player-name" placeholder="O teu nome" />
+      <button id="save-score-btn">Guardar Pontuação</button>
+    </div>
+  </div>
 
-  <script src="script.js"></script>
+  <!-- Sons -->
+  <audio id="musica-fundo" src="audio/musica-fundo.mp3" loop></audio>
+  <audio id="som-rodar" src="audio/rodar.mp3"></audio>
+  <audio id="som-colidir" src="audio/colidir.mp3"></audio>
+  <audio id="som-pontos" src="audio/pontos.mp3"></audio>
+  <audio id="som-perdeu" src="audio/perdeu.mp3"></audio>
+
+  <script src="tetris.js"></script>
 </body>
 </html>
