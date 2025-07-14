@@ -6,7 +6,8 @@ html, body {
 
 body {
   background: url('capadojogo.png') no-repeat center center fixed;
-  background-size: cover; /* ou 'contain' */
+  background-size: contain;
+  background-color: #fdf6e3; /* cor para as faixas laterais */
   font-family: 'Fredoka', sans-serif;
   display: flex;
   justify-content: center;
