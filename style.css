@@ -265,3 +265,62 @@ button:active {
     text-align: center;
     font-family: "Fredoka", sans-serif;
   }
+
+#ranking-container {
+  background: #fffbe7;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(250, 130, 49, 0.15);
+  padding: 20px 10px 15px 10px;
+  margin-top: 20px;
+  max-width: 360px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+#ranking-container h2 {
+  color: #fa8231;
+  font-weight: 700;
+  margin-bottom: 12px;
+  font-size: 1.3rem;
+  letter-spacing: 1px;
+  text-shadow: 1px 1px #f7b731;
+}
+
+#ranking-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#ranking-list li {
+  background: #f7b731;
+  color: #fff;
+  border-radius: 6px;
+  margin: 4px 0;
+  padding: 8px 0;
+  font-weight: 600;
+  font-size: 1.08em;
+  box-shadow: 0 1px 4px rgba(250, 130, 49, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: transform 0.1s, background 0.2s;
+}
+
+#ranking-list li:nth-child(1) {
+  background: #fa8231;
+  font-size: 1.16em;
+  border: 2px solid #f7b731;
+  color: #fffbe7;
+}
+
+#ranking-list li:nth-child(2) {
+  background: #ffc300;
+  color: #fff;
+}
+#ranking-list li:nth-child(3) {
+  background: #d35400;
+  color: #fff;
+}
