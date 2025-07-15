@@ -1,92 +1,85 @@
+/* === BASE === */
 html, body {
-  height: 100%;
   margin: 0;
   padding: 0;
-  overflow: hidden;
+  height: 100%;
+  font-family: 'Fredoka', sans-serif;
+  background-color: #fdf6e3;
+  overflow: hidden; /* Sem scroll */
 }
 
 body {
-  background: url('capadojogo.png') no-repeat center center fixed;
-  background-size: contain;
-  font-family: 'Fredoka', sans-serif;
   display: flex;
   justify-content: center;
   align-items: center;
-  color: #333;
-  user-select: none;
-  position: fixed;
-  width: 100%;
 }
 
-/* CONTAINER DO JOGO */
 #game-container {
-  text-align: center;
-  padding: 20px;
-  background: none; /* total transparência */
-  max-width: 420px;
   width: 100%;
-  margin: auto;
-  border-radius: 16px;
-  box-shadow: none;
+  max-width: 480px;
+  height: 100vh;
+  background: url('capadojogo.png') no-repeat center center;
+  background-size: cover;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  padding: 10px;
+  box-sizing: border-box;
 }
 
-/* CANVAS */
-canvas {
-  background-color: transparent !important;
-  display: block;
-  margin: 0 auto;
-}
-
-/* TÍTULO */
+/* === TÍTULO === */
 h1 {
-  font-weight: 700;
-  margin-bottom: 15px;
-  font-size: 2.5rem;
+  font-size: 2.2rem;
   color: #fa8231;
   text-shadow: 2px 2px #f7b731;
+  margin: 0;
+  padding: 5px;
+  text-align: center;
 }
 
-/* INFO */
+/* === CANVAS === */
+canvas {
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  display: block;
+  background: transparent;
+}
+
+/* === INFO (nível, pontuação, tempo) === */
 #info {
   display: flex;
-  justify-content: space-around;
-  margin-bottom: 15px;
-  font-weight: 700;
-  font-size: 1.2rem;
+  justify-content: space-between;
+  width: 90%;
+  max-width: 320px;
+  font-size: 1rem;
+  font-weight: bold;
   color: #fa8231;
   text-shadow: 1px 1px #f7b731;
 }
 
-/* PRÓXIMA PEÇA */
-#next {
-  background: #222;
-  border-radius: 10px;
-  box-shadow: inset 0 0 10px #f7b731;
-  margin: 10px auto;
-}
-
-/* BOTÕES */
-#controls {
-  margin-top: 10px;
+/* === BOTÕES PRINCIPAIS === */
+#controls,
+#touch-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 5px;
 }
 
 button {
   background: #fa8231;
   border: none;
-  padding: 10px 20px;
-  margin: 5px;
-  font-family: 'Fredoka', sans-serif;
-  font-weight: 700;
+  padding: 10px 16px;
+  font-weight: bold;
   font-size: 1rem;
-  border-radius: 30px;
   color: white;
+  border-radius: 20px;
   cursor: pointer;
-  box-shadow: 0 5px 0 #d35400;
-  transition: background 0.3s ease;
+  box-shadow: 0 4px 0 #d35400;
+  transition: 0.2s ease;
 }
 
 button:hover {
@@ -95,16 +88,17 @@ button:hover {
 }
 
 button:active {
-  box-shadow: none;
   transform: translateY(2px);
+  box-shadow: none;
 }
 
-/* MODAL DE GAME OVER */
+/* === MODAL === */
 #modal {
   position: fixed;
   top: 0; left: 0;
-  width: 100%; height: 100%;
-  background-color: rgba(0,0,0,0.5);
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.7);
   display: none;
   align-items: center;
   justify-content: center;
@@ -117,44 +111,44 @@ button:active {
 
 #modal-content {
   background: white;
-  padding: 25px 35px;
-  border-radius: 15px;
-  width: 90%;
-  max-width: 320px;
-  text-align: center;
-  animation: modalPop 0.4s ease forwards;
-  box-shadow: 0 8px 25px rgba(250, 130, 49, 0.6);
-}
-
-@keyframes modalPop {
-  from {
-    transform: scale(0.7);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-/* RANKING */
-#ranking-container {
-  background: #fffbe7;
+  padding: 20px;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(250, 130, 49, 0.15);
-  padding: 20px 10px 15px 10px;
-  margin-top: 20px;
-  max-width: 360px;
   text-align: center;
+  width: 80%;
+  max-width: 300px;
+  box-shadow: 0 8px 20px rgba(250,130,49,0.6);
+}
+
+#modal-content h2 {
+  color: #fa8231;
+  margin-bottom: 10px;
+  text-shadow: 1px 1px #f7b731;
+}
+
+#player-name {
+  width: 90%;
+  padding: 8px;
+  font-size: 1rem;
+  border: 2px solid #fa8231;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+/* === RANKING === */
+#ranking-container {
+  width: 100%;
+  max-width: 320px;
+  background: rgba(255,255,255,0.85);
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: 0 2px 8px rgba(250,130,49,0.15);
 }
 
 #ranking-container h2 {
   color: #fa8231;
-  font-weight: 700;
-  margin-bottom: 12px;
-  font-size: 1.3rem;
-  letter-spacing: 1px;
-  text-shadow: 1px 1px #f7b731;
+  font-size: 1.1rem;
+  margin-bottom: 10px;
 }
 
 #ranking-list {
@@ -165,24 +159,18 @@ button:active {
 
 #ranking-list li {
   background: #f7b731;
-  color: #fff;
+  margin: 3px 0;
+  padding: 6px;
   border-radius: 6px;
-  margin: 4px 0;
-  padding: 8px 0;
+  color: #fff;
   font-weight: 600;
-  font-size: 1.08em;
-  box-shadow: 0 1px 4px rgba(250, 130, 49, 0.08);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
+  font-size: 0.95rem;
+  text-align: center;
 }
 
 #ranking-list li:nth-child(1) {
   background: #fa8231;
-  font-size: 1.16em;
   border: 2px solid #f7b731;
-  color: #fffbe7;
 }
 
 #ranking-list li:nth-child(2) {
@@ -191,22 +179,4 @@ button:active {
 
 #ranking-list li:nth-child(3) {
   background: #d35400;
-}
-
-/* MOBILE */
-@media (max-width: 480px) {
-  #info {
-    flex-direction: column;
-    gap: 5px;
-    font-size: 1rem;
-  }
-
-  button {
-    width: 100%;
-    margin: 5px 0;
-  }
-
-  #game-container {
-    padding: 15px;
-  }
 }
