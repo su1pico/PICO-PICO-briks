@@ -387,9 +387,44 @@ window.addEventListener("load", resizeCanvas);
 // 🤏 Gestos de toque (início de swipe)
 let startX = 0;
 let startY = 0;
+let endX = 0;
+let endY = 0;
 
 canvas.addEventListener("touchstart", function (e) {
-  const touch = e.touches[0];
-  startX = touch.clientX;
-  startY = touch.clientY;
-});
+  if (e.touches.length === 1) {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+  }
+}, false);
+
+canvas.addEventListener("touchend", function (e) {
+  endX = e.changedTouches[0].clientX;
+  endY = e.changedTouches[0].clientY;
+
+  const deltaX = endX - startX;
+  const deltaY = endY - startY;
+
+  const absX = Math.abs(deltaX);
+  const absY = Math.abs(deltaY);
+
+  // Swipe horizontal
+  if (absX > absY && absX > 20) {
+    if (deltaX > 0) {
+      move(1); // Swipe para a direita
+    } else {
+      move(-1); // Swipe para a esquerda
+    }
+  }
+
+  // Swipe vertical
+  else if (absY > absX && absY > 20) {
+    if (deltaY > 0) {
+      drop(); // Swipe para baixo
+    }
+  }
+
+  // Toque leve (sem arrastar)
+  else if (absX < 10 && absY < 10) {
+    rotatePiece(1); // Toque simples: rodar peça
+  }
+}, false);
