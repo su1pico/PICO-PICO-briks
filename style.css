@@ -1,329 +1,126 @@
 html, body {
-  height: 100%;
   margin: 0;
   padding: 0;
+  height: 100%;
+  font-family: 'Fredoka', sans-serif;
+  background-color: #fdf6e3;
 }
 
 body {
-  background: url('capadojogo.png') no-repeat center center fixed;
-  background-size: contain;
-  background-color: #fdf6e3; /* cor para as faixas laterais */
-  font-family: 'Fredoka', sans-serif;
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: 100vh;
-  color: #333;
-  user-select: none;
-}
-
-canvas {
-  background-color: transparent !important;
-  display: block;
-  margin: 0 auto;
+  align-items: flex-start;
+  flex-direction: column;
+  padding: 10px;
 }
 
 #game-container {
+  max-width: 480px;
+  width: 100%;
+  margin: auto;
+  padding: 10px;
+  background-color: rgba(255,255,255,0.95);
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
   text-align: center;
-  padding: 20px;
-  background-color: rgba(255, 255, 255, 0.9);
-  max-width: 420px;
+}
+
+canvas {
+  width: 100%;
+  height: auto;
+  display: block;
   margin: 0 auto;
-  border-radius: 16px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.2);
-}
-
-h1 {
-  font-weight: 700;
-  margin-bottom: 15px;
-  font-size: 2.5rem;
-  color: #fa8231;
-  text-shadow: 2px 2px #f7b731;
-}
-
-#game {
-  background: rgba(255, 255, 255, 0.9);
-  border: 5px solid #fa8231;
-  border-radius: 20px;
-  padding: 15px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.2);
-  margin: 0 auto 15px;
-  width: 320px;
 }
 
 #info {
   display: flex;
   justify-content: space-around;
-  margin-bottom: 15px;
-  font-weight: 700;
-  font-size: 1.2rem;
+  flex-wrap: wrap;
+  margin: 10px 0;
+  font-weight: bold;
   color: #fa8231;
   text-shadow: 1px 1px #f7b731;
 }
 
 #next {
+  width: 100px;
+  height: 100px;
+  margin: 10px auto;
+  display: block;
   background: #222;
   border-radius: 10px;
   box-shadow: inset 0 0 10px #f7b731;
-  margin-left: 10px;
-  display: block;
-  margin: 0 auto;
-}
-
-#controls {
-  margin-top: 10px;
 }
 
 button {
-  background: #fa8231;
-  border: none;
-  padding: 10px 20px;
-  margin: 5px;
-  font-family: 'Fredoka', sans-serif;
-  font-weight: 700;
-  font-size: 1rem;
-  border-radius: 30px;
+  width: 100%;
+  padding: 10px;
+  margin: 6px 0;
+  font-weight: bold;
+  background-color: #fa8231;
   color: white;
-  cursor: pointer;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
   box-shadow: 0 5px 0 #d35400;
-  transition: background 0.3s ease;
-}
-
-button:hover {
-  background: #f7b731;
-  color: #222;
 }
 
 button:active {
-  box-shadow: none;
   transform: translateY(2px);
+  box-shadow: none;
+}
+
+#controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+#controls button {
+  flex: 1 1 45%;
+}
+
+/* Ocultar controles táteis se usarmos gestos */
+#touch-controls {
+  display: none;
+}
+
+#ranking-container {
+  margin-top: 20px;
+  background: #fffbe7;
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: 0 2px 8px rgba(250, 130, 49, 0.15);
 }
 
 #modal {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,0.5);
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   display: none;
   align-items: center;
   justify-content: center;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 999;
 }
 
 #modal.show {
-  opacity: 1;
-  pointer-events: auto;
+  display: flex;
 }
 
 #modal-content {
   background: white;
-  padding: 25px 35px;
-  border-radius: 15px;
+  padding: 20px;
+  border-radius: 10px;
   width: 90%;
   max-width: 320px;
   text-align: center;
-  animation: modalPop 0.4s ease forwards;
-  box-shadow: 0 8px 25px rgba(250, 130, 49, 0.6);
 }
 
-@keyframes modalPop {
-  from {
-    transform: scale(0.7);
-    opacity: 0;
+/* Mobile extra ajuste */
+@media (max-height: 700px) {
+  #board {
+    height: 60vh !important;
   }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-#modal-content h2 {
-  margin-bottom: 15px;
-  color: #fa8231;
-  text-shadow: 1px 1px #f7b731;
-}
-
-#modal-content p {
-  font-weight: 700;
-  font-size: 1.2rem;
-  margin-bottom: 10px;
-}
-
-#player-name {
-  width: 80%;
-  padding: 8px;
-  font-size: 1.1rem;
-  border-radius: 10px;
-  border: 2px solid #fa8231;
-  margin-bottom: 15px;
-  outline-color: #f7b731;
-  font-family: 'Fredoka', sans-serif;
-  font-weight: 700;
-  text-align: center;
-}
-
-#save-score-btn {
-  background: #fa8231;
-  padding: 10px 25px;
-  border-radius: 30px;
-  border: none;
-  font-weight: 700;
-  font-size: 1.1rem;
-  color: white;
-  cursor: pointer;
-  box-shadow: 0 5px 0 #d35400;
-  transition: background 0.3s ease;
-  font-family: 'Fredoka', sans-serif;
-}
-
-#save-score-btn:hover {
-  background: #f7b731;
-  color: #222;
-}
-
-#save-score-btn:active {
-  box-shadow: none;
-  transform: translateY(2px);
-}
-
-/* Responsivo */
-@media (max-width: 480px) {
-  #game-container {
-    padding: 15px;
-  }
-
-  h1 {
-    font-size: 2rem;
-  }
-
-  #info {
-    font-size: 1rem;
-    flex-direction: column;
-    gap: 5px;
-  }
-
-  #game {
-    width: 280px !important;
-    height: 560px !important;
-  }
-
-  #next {
-    width: 100px !important;
-    height: 100px !important;
-    margin-left: 0;
-    margin-top: 10px;
-  }
-
-  button {
-    width: 100%;
-    margin: 5px 0;
-  }
-}
-
-<style>
-  .controls {
-    margin-top: 10px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
-  }
-
-  .controls button {
-    padding: 10px 14px;
-    font-size: 18px;
-    border-radius: 8px;
-    border: 2px solid #333;
-    background-color: #444;
-    color: #fff;
-    cursor: pointer;
-    font-family: "Fredoka", sans-serif;
-    transition: background-color 0.2s;
-  }
-
-  .controls button:hover {
-    background-color: #555;
-  }
-
-  #modal {
-    display: none;
-    position: fixed;
-    z-index: 999;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.75);
-    justify-content: center;
-    align-items: center;
-  }
-
-  #modal.show {
-    display: flex;
-  }
-
-  #modal-content {
-    background: white;
-    padding: 2em;
-    border-radius: 10px;
-    text-align: center;
-    font-family: "Fredoka", sans-serif;
-  }
-
-#ranking-container {
-  background: #fffbe7;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(250, 130, 49, 0.15);
-  padding: 20px 10px 15px 10px;
-  margin-top: 20px;
-  max-width: 360px;
-  margin-left: auto;
-  margin-right: auto;
-  text-align: center;
-}
-
-#ranking-container h2 {
-  color: #fa8231;
-  font-weight: 700;
-  margin-bottom: 12px;
-  font-size: 1.3rem;
-  letter-spacing: 1px;
-  text-shadow: 1px 1px #f7b731;
-}
-
-#ranking-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-#ranking-list li {
-  background: #f7b731;
-  color: #fff;
-  border-radius: 6px;
-  margin: 4px 0;
-  padding: 8px 0;
-  font-weight: 600;
-  font-size: 1.08em;
-  box-shadow: 0 1px 4px rgba(250, 130, 49, 0.08);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  transition: transform 0.1s, background 0.2s;
-}
-
-#ranking-list li:nth-child(1) {
-  background: #fa8231;
-  font-size: 1.16em;
-  border: 2px solid #f7b731;
-  color: #fffbe7;
-}
-
-#ranking-list li:nth-child(2) {
-  background: #ffc300;
-  color: #fff;
-}
-#ranking-list li:nth-child(3) {
-  background: #d35400;
-  color: #fff;
 }
