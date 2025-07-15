@@ -1,102 +1,86 @@
-const nextCanvas = document.getElementById("next");
-const nextCtx = nextCanvas.getContext("2d");
+// === CONSTANTES E CONFIG ===
 const canvas = document.getElementById("board");
 const ctx = canvas.getContext("2d");
+const nextCanvas = document.getElementById("next");
+const nextCtx = nextCanvas.getContext("2d");
+const blockSize = 32;
+const colunas = 10;
+const linhas = 20;
+let tabuleiro = Array.from({ length: linhas }, () => Array(colunas).fill(0));
 
-const levelEl = document.getElementById("level");
-const scoreEl = document.getElementById("score");
-const timeEl = document.getElementById("time");
-const startBtn = document.getElementById("startBtn");
-const toggleSoundBtn = document.getElementById("toggle-sound");
+// === PEÇAS ===
+const pecas = [
+  { forma: [[1, 1, 1, 1]], cor: "cyan" }, // I
+  { forma: [[1, 1, 0], [0, 1, 1]], cor: "orange" }, // Z
+  { forma: [[0, 1, 1], [1, 1, 0]], cor: "red" }, // S
+  { forma: [[1, 0, 0], [1, 1, 1]], cor: "blue" }, // J
+  { forma: [[0, 0, 1], [1, 1, 1]], cor: "green" }, // L
+  { forma: [[1, 1], [1, 1]], cor: "yellow" }, // O
+  { forma: [[0, 1, 0], [1, 1, 1]], cor: "purple" }, // T
+];
 
-const musicaFundo = document.getElementById("musica-fundo");
+// === ESTADO ===
+let pecaAtual, proximaPeca, posX, posY;
+let nivel = 1, score = 0, linhasLimpa = 0;
+let intervaloQueda = 1000, tempoAnterior = 0;
+let jogoRodando = false, pausado = false;
+let tempoInicial, tempoAtual;
+let somLigado = true;
+
+// === ELEMENTOS DOM ===
+const scoreSpan = document.getElementById("score");
+const levelSpan = document.getElementById("level");
+const timeSpan = document.getElementById("time");
+const modal = document.getElementById("modal");
+const finalScore = document.getElementById("final-score");
+const playerNameInput = document.getElementById("player-name");
+const rankingList = document.getElementById("ranking-list");
+
+// === SONS ===
 const somRodar = document.getElementById("som-rodar");
 const somColidir = document.getElementById("som-colidir");
 const somPontos = document.getElementById("som-pontos");
 const somPerdeu = document.getElementById("som-perdeu");
+const musicaFundo = document.getElementById("musica-fundo");
 
-let somAtivo = true;
-let paused = false;
+// === FUNÇÕES ===
+function iniciarJogo() {
+  tabuleiro = Array.from({ length: linhas }, () => Array(colunas).fill(0));
+  score = 0; nivel = 1; linhasLimpa = 0;
+  intervaloQueda = 1000;
+  tempoInicial = Date.now();
+  proximaPeca = gerarPeca();
+  novaPeca();
+  jogoRodando = true;
+  pausado = false;
+  musicaFundo.play();
+  requestAnimationFrame(loop);
+}
 
-const COLS = 10;
-const ROWS = 20;
-const BLOCK_SIZE = 32;
-
-canvas.width = COLS * BLOCK_SIZE;
-canvas.height = ROWS * BLOCK_SIZE;
-nextCanvas.width = 4 * BLOCK_SIZE;
-nextCanvas.height = 4 * BLOCK_SIZE;
-
-const COLORS = [
-  null,
-  "#FF3CAC", // Rosa neon
-  "#784BA0", // Roxo suave
-  "#29FFC6", // Verde água neon
-  "#F8FF00", // Amarelo neon
-  "#00F0FF", // Azul ciano neon
-  "#FFB65C", // Laranja pastel
-  "#FF4E50"  // Vermelho coral
-];
-
-const SHAPES = [
-  [],
-  [[1,1,1,1]],
-  [[2,2],[2,2]],
-  [[0,3,0],[3,3,3]],
-  [[4,4,0],[0,4,4]],
-  [[0,5,5],[5,5,0]],
-  [[6,0,0],[6,6,6]],
-  [[0,0,7],[7,7,7]],
-];
-
-let board, currentPiece, nextPiece, pos, score, level, linesCleared;
-let dropInterval, dropCounter, lastTime, gameOver, startTime;
-let animationId = null;
-
-function playSound(audio) {
-  if (somAtivo) {
-    audio.currentTime = 0;
-    audio.play();
+function novaPeca() {
+  pecaAtual = proximaPeca;
+  proximaPeca = gerarPeca();
+  posX = 3; posY = 0;
+  if (colide(0, 0, pecaAtual.forma)) {
+    fimDeJogo();
   }
 }
 
-function createMatrix(w, h) {
-  return Array.from({ length: h }, () => Array(w).fill(0));
+function gerarPeca() {
+  const aleatoria = pecas[Math.floor(Math.random() * pecas.length)];
+  return { ...aleatoria, forma: aleatoria.forma.map(l => [...l]) };
 }
 
-function drawMatrix(matrix, offset, context = ctx) {
-  matrix.forEach((row, y) => {
-    row.forEach((value, x) => {
-      if (value !== 0) {
-        const color = COLORS[value];
-        const gx = (x + offset.x);
-        const gy = (y + offset.y);
-        const gradient = context.createLinearGradient(
-          gx * BLOCK_SIZE, gy * BLOCK_SIZE,
-          (gx + 1) * BLOCK_SIZE, (gy + 1) * BLOCK_SIZE
-        );
-        gradient.addColorStop(0, "#ffffff");
-        gradient.addColorStop(1, color);
-
-        context.fillStyle = gradient;
-        context.strokeStyle = "#222";
-        context.lineWidth = 2;
-        context.shadowColor = "rgba(0, 0, 0, 0.4)";
-        context.shadowBlur = 6;
-
-        context.fillRect(gx * BLOCK_SIZE, gy * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
-        context.strokeRect(gx * BLOCK_SIZE, gy * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
-        context.shadowColor = "transparent";
-        context.shadowBlur = 0;
-      }
-    });
-  });
-}
-
-function collide(board, piece, pos) {
-  for (let y = 0; y < piece.length; y++) {
-    for (let x = 0; x < piece[y].length; x++) {
-      if (piece[y][x] !== 0 && (board[y + pos.y] && board[y + pos.y][x + pos.x]) !== 0) {
+function colide(offsetX, offsetY, forma) {
+  for (let y = 0; y < forma.length; y++) {
+    for (let x = 0; x < forma[y].length; x++) {
+      if (
+        forma[y][x] &&
+        (tabuleiro[y + posY + offsetY]?.[x + posX + offsetX] !== 0 ||
+          y + posY + offsetY >= linhas ||
+          x + posX + offsetX < 0 ||
+          x + posX + offsetX >= colunas)
+      ) {
         return true;
       }
     }
@@ -104,229 +88,169 @@ function collide(board, piece, pos) {
   return false;
 }
 
-function merge(board, piece, pos) {
-  piece.forEach((row, y) => {
-    row.forEach((value, x) => {
-      if (value !== 0) board[y + pos.y][x + pos.x] = value;
+function fixar() {
+  pecaAtual.forma.forEach((linha, y) => {
+    linha.forEach((valor, x) => {
+      if (valor) tabuleiro[y + posY][x + posX] = pecaAtual.cor;
     });
   });
-  playSound(somColidir);
+  somColidir.play();
+  limparLinhas();
+  novaPeca();
 }
 
-function rotate(matrix, dir) {
-  const res = matrix[0].map((_, i) => matrix.map(row => row[i]));
-  return dir > 0 ? res.reverse() : res.map(row => row.reverse());
-}
-
-function resetPiece() {
-  currentPiece = nextPiece;
-  nextPiece = randomPiece();
-  pos = { x: Math.floor(COLS / 2) - Math.floor(currentPiece[0].length / 2), y: 0 };
-  if (collide(board, currentPiece, pos)) {
-    gameOver = true;
-    playSound(somPerdeu);
-    showGameOverModal();
-  }
-}
-
-function randomPiece() {
-  const index = Math.floor(Math.random() * (SHAPES.length - 1)) + 1;
-  return SHAPES[index].map(row => row.slice());
-}
-
-function clearLines() {
-  let lines = 0;
-  outer: for (let y = board.length - 1; y >= 0; y--) {
-    for (let x = 0; x < COLS; x++) {
-      if (board[y][x] === 0) continue outer;
+function limparLinhas() {
+  let linhasParaLimpar = 0;
+  tabuleiro = tabuleiro.filter(linha => {
+    if (linha.every(c => c !== 0)) {
+      linhasParaLimpar++;
+      return false;
     }
-    const row = board.splice(y, 1)[0].fill(0);
-    board.unshift(row);
-    lines++;
-    y++;
-  }
-  if (lines > 0) {
-    linesCleared += lines;
-    score += lines * 100 * level;
-    if (linesCleared >= level * 10) {
-      level++;
-      dropInterval *= 0.8;
+    return true;
+  });
+  while (tabuleiro.length < linhas) tabuleiro.unshift(Array(colunas).fill(0));
+
+  if (linhasParaLimpar > 0) {
+    score += linhasParaLimpar * 100;
+    linhasLimpa += linhasParaLimpar;
+    somPontos.play();
+    if (linhasLimpa >= nivel * 5) {
+      nivel++;
+      intervaloQueda *= 0.9;
     }
-    playSound(somPontos);
   }
-  updateScore();
 }
 
-function updateScore() {
-  scoreEl.textContent = score;
-  levelEl.textContent = level;
+function mover(dx) {
+  if (!colide(dx, 0, pecaAtual.forma)) posX += dx;
 }
 
-function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height); // limpa
-  ctx.fillStyle = "rgba(253, 246, 227, 0.25)"; // cor #fdf6e3 com 75% de opacidade
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  drawMatrix(board, { x: 0, y: 0 });
-  if (currentPiece) drawMatrix(currentPiece, pos);
-  ctx.strokeStyle = "#888";
-  ctx.lineWidth = 4;
-  ctx.strokeRect(0, 0, COLS * BLOCK_SIZE, ROWS * BLOCK_SIZE);
+function descer() {
+  if (!colide(0, 1, pecaAtual.forma)) {
+    posY++;
+  } else {
+    fixar();
+  }
 }
 
-function drawNext() {
+function rodar() {
+  const novaForma = pecaAtual.forma[0].map((_, i) =>
+    pecaAtual.forma.map(l => l[i]).reverse()
+  );
+  if (!colide(0, 0, novaForma)) {
+    pecaAtual.forma = novaForma;
+    somRodar.play();
+  }
+}
+
+function desenharTabuleiro() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (let y = 0; y < linhas; y++) {
+    for (let x = 0; x < colunas; x++) {
+      if (tabuleiro[y][x]) {
+        ctx.fillStyle = tabuleiro[y][x];
+        ctx.fillRect(x * blockSize, y * blockSize, blockSize, blockSize);
+      }
+    }
+  }
+}
+
+function desenharPeca() {
+  pecaAtual.forma.forEach((linha, y) => {
+    linha.forEach((valor, x) => {
+      if (valor) {
+        ctx.fillStyle = pecaAtual.cor;
+        ctx.fillRect((x + posX) * blockSize, (y + posY) * blockSize, blockSize, blockSize);
+      }
+    });
+  });
+}
+
+function desenharProximaPeca() {
   nextCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
-  const offsetX = Math.floor((4 - nextPiece[0].length) / 2);
-  const offsetY = Math.floor((4 - nextPiece.length) / 2);
-  drawMatrix(nextPiece, { x: offsetX, y: offsetY }, nextCtx);
+  proximaPeca.forma.forEach((linha, y) => {
+    linha.forEach((valor, x) => {
+      if (valor) {
+        nextCtx.fillStyle = proximaPeca.cor;
+        nextCtx.fillRect(x * blockSize, y * blockSize, blockSize, blockSize);
+      }
+    });
+  });
 }
 
-function drop() {
-  pos.y++;
-  if (collide(board, currentPiece, pos)) {
-    pos.y--;
-    merge(board, currentPiece, pos);
-    clearLines();
-    resetPiece();
+function atualizarInfo() {
+  scoreSpan.textContent = score;
+  levelSpan.textContent = nivel;
+  const tempo = Math.floor((Date.now() - tempoInicial) / 1000);
+  const min = String(Math.floor(tempo / 60)).padStart(2, "0");
+  const seg = String(tempo % 60).padStart(2, "0");
+  timeSpan.textContent = `${min}:${seg}`;
+}
+
+function loop(tempoAtualLoop) {
+  if (!jogoRodando || pausado) return;
+  const delta = tempoAtualLoop - tempoAnterior;
+  if (delta > intervaloQueda) {
+    descer();
+    tempoAnterior = tempoAtualLoop;
   }
-  dropCounter = 0;
+  desenharTabuleiro();
+  desenharPeca();
+  desenharProximaPeca();
+  atualizarInfo();
+  requestAnimationFrame(loop);
 }
 
-function move(dir) {
-  pos.x += dir;
-  if (collide(board, currentPiece, pos)) pos.x -= dir;
-}
-
-function rotatePiece(dir) {
-  currentPiece = rotate(currentPiece, dir);
-  if (collide(board, currentPiece, pos)) {
-    currentPiece = rotate(currentPiece, -dir);
-  } else {
-    playSound(somRodar);
-  }
-}
-
-function update(time = 0) {
-  if (gameOver || paused) return;
-
-  if (!startTime) startTime = time;
-  const deltaTime = time - lastTime;
-  dropCounter += deltaTime;
-  lastTime = time;
-
-  if (dropCounter > dropInterval) drop();
-
-  const elapsed = Math.floor((time - startTime) / 1000);
-  const minutes = String(Math.floor(elapsed / 60)).padStart(2, "0");
-  const seconds = String(elapsed % 60).padStart(2, "0");
-  timeEl.textContent = `${minutes}:${seconds}`;
-
-  draw();
-  drawNext();
-  animationId = requestAnimationFrame(update);
-}
-
-function startGame() {
-  board = createMatrix(COLS, ROWS);
-  score = 0;
-  level = 1;
-  linesCleared = 0;
-  dropInterval = 1000;
-  dropCounter = 0;
-  lastTime = 0;
-  gameOver = false;
-  startTime = null;
-  paused = false;
-
-  nextPiece = randomPiece();
-  resetPiece();
-  updateScore();
-  if (somAtivo) musicaFundo.play();
-  animationId = requestAnimationFrame(update);
-}
-
-function resetGame() {
-  cancelAnimationFrame(animationId);
-  musicaFundo.currentTime = 0;
-  startGame();
-}
-
-function togglePause() {
-  paused = !paused;
-  if (paused) {
-    cancelAnimationFrame(animationId);
-    musicaFundo.pause();
-  } else {
-    lastTime = performance.now();
-    if (somAtivo) musicaFundo.play();
-    animationId = requestAnimationFrame(update);
-  }
-}
-
-startBtn.addEventListener("click", startGame);
-document.getElementById("resetBtn").addEventListener("click", resetGame);
-
-toggleSoundBtn.addEventListener("click", () => {
-  somAtivo = !somAtivo;
-  toggleSoundBtn.textContent = somAtivo ? "🔊 Som" : "🔇 Silenciar";
-  if (somAtivo) musicaFundo.play();
-  else musicaFundo.pause();
-});
-
-window.addEventListener("keydown", (e) => {
-  if (gameOver) return;
-  if (e.key === "p" || e.key === "P") {
-    togglePause();
-    return;
-  }
-  switch (e.key) {
-    case "ArrowLeft": move(-1); break;
-    case "ArrowRight": move(1); break;
-    case "ArrowDown": drop(); break;
-    case "ArrowUp": rotatePiece(1); break;
-  }
-});
-
-document.getElementById("save-score-btn").addEventListener("click", () => {
-  const name = document.getElementById("player-name").value.trim();
-  if (name) {
-    const scores = JSON.parse(localStorage.getItem("scores")) || [];
-    scores.push({ name, score });
-    scores.sort((a, b) => b.score - a.score);
-    scores.splice(10);
-    localStorage.setItem("scores", JSON.stringify(scores));
-    location.reload();
-  } else {
-    alert("Por favor, insere o teu nome.");
-  }
-});
-
-function showGameOverModal() {
-  const modal = document.getElementById("modal");
-  const finalScore = document.getElementById("final-score");
+function fimDeJogo() {
+  jogoRodando = false;
+  musicaFundo.pause();
+  somPerdeu.play();
   finalScore.textContent = `Pontuação: ${score}`;
   modal.classList.add("show");
 }
 
-function loadRanking() {
-  const rankingList = document.getElementById("ranking-list");
-  if (!rankingList) return;
-  const scores = JSON.parse(localStorage.getItem("scores")) || [];
-  const medals = ["🥇", "🥈", "🥉"];
-  rankingList.innerHTML = scores
-    .map((entry, i) => `<li>${medals[i] || (i + 1)}. ${entry.name} - ${entry.score}</li>`)
-    .join("");
+function salvarPontuacao() {
+  const nome = playerNameInput.value.trim();
+  if (!nome) return;
+  const ranking = JSON.parse(localStorage.getItem("ranking")) || [];
+  ranking.push({ nome, score });
+  ranking.sort((a, b) => b.score - a.score);
+  localStorage.setItem("ranking", JSON.stringify(ranking.slice(0, 10)));
+  modal.classList.remove("show");
+  mostrarRanking();
 }
-loadRanking();
 
-// Botão visual de pausa
-document.getElementById("pauseBtn").addEventListener("click", () => {
-  togglePause();
-  const btn = document.getElementById("pauseBtn");
-  btn.textContent = paused ? "▶ Retomar" : "⏸ Pausar";
+function mostrarRanking() {
+  const ranking = JSON.parse(localStorage.getItem("ranking")) || [];
+  rankingList.innerHTML = ranking.map(j => `<li>${j.nome}: ${j.score}</li>`).join("");
+}
+
+function toggleSom() {
+  somLigado = !somLigado;
+  const audios = [musicaFundo, somRodar, somColidir, somPontos, somPerdeu];
+  audios.forEach(a => (a.muted = !somLigado));
+}
+
+// === EVENTOS ===
+document.getElementById("startBtn").onclick = iniciarJogo;
+document.getElementById("resetBtn").onclick = iniciarJogo;
+document.getElementById("save-score-btn").onclick = salvarPontuacao;
+document.getElementById("toggle-sound").onclick = toggleSom;
+document.getElementById("pauseBtn").onclick = () => (pausado = !pausado);
+
+// Controles
+window.addEventListener("keydown", e => {
+  if (!jogoRodando || pausado) return;
+  if (e.key === "ArrowLeft") mover(-1);
+  if (e.key === "ArrowRight") mover(1);
+  if (e.key === "ArrowDown") descer();
+  if (e.key === "ArrowUp") rodar();
 });
 
-// Controles táteis
-document.getElementById("leftBtn").addEventListener("click", () => move(-1));
-document.getElementById("rightBtn").addEventListener("click", () => move(1));
-document.getElementById("downBtn").addEventListener("click", drop);
-document.getElementById("rotateBtn").addEventListener("click", () => rotatePiece(1));
+document.getElementById("leftBtn").onclick = () => mover(-1);
+document.getElementById("rightBtn").onclick = () => mover(1);
+document.getElementById("downBtn").onclick = () => descer();
+document.getElementById("rotateBtn").onclick = () => rodar();
+
+// === INICIAR ===
+mostrarRanking();
