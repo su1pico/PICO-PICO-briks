@@ -60,6 +60,22 @@ function playSound(audio) {
   }
 }
 
+function resizeCanvas() {
+  const board = document.getElementById('board');
+  const container = document.getElementById('canvas-wrapper');
+
+  // Tamanho máximo baseado na altura visível
+  const maxHeight = window.innerHeight * 0.6;
+  const aspectRatio = 320 / 640;
+
+  board.height = maxHeight;
+  board.width = maxHeight * aspectRatio;
+}
+
+// Executar no carregamento e redimensionamento
+window.addEventListener('resize', resizeCanvas);
+window.addEventListener('load', resizeCanvas);
+
 function createMatrix(w, h) {
   return Array.from({ length: h }, () => Array(w).fill(0));
 }
