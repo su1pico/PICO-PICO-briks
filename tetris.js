@@ -1,3 +1,6 @@
+// ======================
+// 🎨 1. Inicialização de Canvas e Elementos DOM
+// ======================
 const nextCanvas = document.getElementById("next");
 const nextCtx = nextCanvas.getContext("2d");
 const canvas = document.getElementById("board");
@@ -18,13 +21,16 @@ const somPerdeu = document.getElementById("som-perdeu");
 let somAtivo = true;
 let paused = false;
 
+// ======================
+// 🔢 2. Configuração do Tabuleiro
+// ======================
 const COLS = 10;
 const ROWS = 20;
 let BLOCK_SIZE = 32;
 
 function ajustarBlockSize() {
   const largura = canvas.parentElement.clientWidth;
-  const maxBlockSize = 28;  // limite máximo de tamanho dos blocos
+  const maxBlockSize = 28;
   BLOCK_SIZE = Math.min(Math.floor(largura / COLS), maxBlockSize);
   canvas.width = COLS * BLOCK_SIZE;
   canvas.height = ROWS * BLOCK_SIZE;
@@ -44,15 +50,13 @@ window.addEventListener("load", () => {
   drawNext();
 });
 
+// ======================
+// 🧩 3. Definição de Cores e Formatos das Peças
+// ======================
 const COLORS = [
   null,
-  "#FF3CAC", // Rosa neon
-  "#784BA0", // Roxo suave
-  "#29FFC6", // Verde água neon
-  "#F8FF00", // Amarelo neon
-  "#00F0FF", // Azul ciano neon
-  "#FFB65C", // Laranja pastel
-  "#FF4E50"  // Vermelho coral
+  "#FF3CAC", "#784BA0", "#29FFC6",
+  "#F8FF00", "#00F0FF", "#FFB65C", "#FF4E50"
 ];
 
 const SHAPES = [
@@ -66,10 +70,16 @@ const SHAPES = [
   [[0,0,7],[7,7,7]],
 ];
 
+// ======================
+// 🧠 4. Estado do Jogo
+// ======================
 let board, currentPiece, nextPiece, pos, score, level, linesCleared;
 let dropInterval, dropCounter, lastTime, gameOver, startTime;
 let animationId = null;
 
+// ======================
+// 🔊 5. Função de Áudio
+// ======================
 function playSound(audio) {
   if (somAtivo) {
     audio.currentTime = 0;
@@ -77,6 +87,9 @@ function playSound(audio) {
   }
 }
 
+// ======================
+// 🔧 6. Lógica de Peças e Colisões
+// ======================
 function createMatrix(w, h) {
   return Array.from({ length: h }, () => Array(w).fill(0));
 }
@@ -86,8 +99,8 @@ function drawMatrix(matrix, offset, context = ctx) {
     row.forEach((value, x) => {
       if (value !== 0) {
         const color = COLORS[value];
-        const gx = (x + offset.x);
-        const gy = (y + offset.y);
+        const gx = x + offset.x;
+        const gy = y + offset.y;
         const gradient = context.createLinearGradient(
           gx * BLOCK_SIZE, gy * BLOCK_SIZE,
           (gx + 1) * BLOCK_SIZE, (gy + 1) * BLOCK_SIZE
@@ -130,6 +143,9 @@ function merge(board, piece, pos) {
   playSound(somColidir);
 }
 
+// ======================
+// 🔄 7. Rotação e Reset de Peça
+// ======================
 function rotate(matrix, dir) {
   const res = matrix[0].map((_, i) => matrix.map(row => row[i]));
   return dir > 0 ? res.reverse() : res.map(row => row.reverse());
@@ -151,14 +167,17 @@ function randomPiece() {
   return SHAPES[index].map(row => row.slice());
 }
 
+// ======================
+// ✅ 8. Pontuação, Linhas e Níveis
+// ======================
 function clearLines() {
   let lines = 0;
   outer: for (let y = board.length - 1; y >= 0; y--) {
     for (let x = 0; x < COLS; x++) {
       if (board[y][x] === 0) continue outer;
     }
-    const row = board.splice(y, 1)[0].fill(0);
-    board.unshift(row);
+    board.splice(y, 1);
+    board.unshift(new Array(COLS).fill(0));
     lines++;
     y++;
   }
@@ -179,9 +198,12 @@ function updateScore() {
   levelEl.textContent = level;
 }
 
+// ======================
+// 🖼️ 9. Renderização (Desenhar Jogo)
+// ======================
 function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height); // limpa
-  ctx.fillStyle = "rgba(253, 246, 227, 0.25)"; // cor #fdf6e3 com 75% de opacidade
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "rgba(253, 246, 227, 0.25)";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   drawMatrix(board, { x: 0, y: 0 });
   if (currentPiece) drawMatrix(currentPiece, pos);
@@ -197,6 +219,9 @@ function drawNext() {
   drawMatrix(nextPiece, { x: offsetX, y: offsetY }, nextCtx);
 }
 
+// ======================
+// ⏬ 10. Movimento, Queda e Rotação
+// ======================
 function drop() {
   pos.y++;
   if (collide(board, currentPiece, pos)) {
@@ -222,6 +247,9 @@ function rotatePiece(dir) {
   }
 }
 
+// ======================
+// ⏱️ 11. Lógica de Atualização (animação e tempo)
+// ======================
 function update(time = 0) {
   if (gameOver || paused) return;
 
@@ -242,6 +270,9 @@ function update(time = 0) {
   animationId = requestAnimationFrame(update);
 }
 
+// ======================
+// ▶️ 12. Início e Reinício
+// ======================
 function startGame() {
   board = createMatrix(COLS, ROWS);
   score = 0;
@@ -267,6 +298,9 @@ function resetGame() {
   startGame();
 }
 
+// ======================
+// ⏸️ 13. Pausa e Retomar
+// ======================
 function togglePause() {
   paused = !paused;
   if (paused) {
@@ -279,6 +313,9 @@ function togglePause() {
   }
 }
 
+// ======================
+// 🕹️ 14. Controles (Teclado e Botões)
+// ======================
 startBtn.addEventListener("click", startGame);
 document.getElementById("resetBtn").addEventListener("click", resetGame);
 
@@ -303,6 +340,9 @@ window.addEventListener("keydown", (e) => {
   }
 });
 
+// ======================
+// 🏆 15. Ranking Local (Top 10)
+// ======================
 document.getElementById("save-score-btn").addEventListener("click", () => {
   const name = document.getElementById("player-name").value.trim();
   if (name) {
@@ -335,34 +375,23 @@ function loadRanking() {
 }
 loadRanking();
 
-// Botão visual de pausa
+// ======================
+// 👆 16. Botões Touch / Mobile
+// ======================
 document.getElementById("pauseBtn").addEventListener("click", () => {
   togglePause();
   const btn = document.getElementById("pauseBtn");
   btn.textContent = paused ? "▶ Retomar" : "⏸ Pausar";
 });
 
-// Controles táteis
 document.getElementById("leftBtn").addEventListener("click", () => move(-1));
 document.getElementById("rightBtn").addEventListener("click", () => move(1));
 document.getElementById("downBtn").addEventListener("click", drop);
 document.getElementById("rotateBtn").addEventListener("click", () => rotatePiece(1));
 
-function resizeCanvas() {
-  const containerWidth = canvas.parentElement.clientWidth;
-  const idealWidth = containerWidth;
-  const idealHeight = idealWidth * (ROWS / COLS);
-
-  canvas.width = idealWidth;
-  canvas.height = idealHeight;
-  nextCanvas.width = 100;
-  nextCanvas.height = 100;
-}
-
-window.addEventListener("resize", resizeCanvas);
-window.addEventListener("load", resizeCanvas);
-
-// Gestos de toque (mobile)
+// ======================
+// 📱 17. Gestos de Toque
+// ======================
 let startX = 0;
 let startY = 0;
 
@@ -386,9 +415,8 @@ canvas.addEventListener("touchend", function (e) {
   }
 
   if (absX > absY) {
-    if (deltaX > 0) move(1);
-    else move(-1);
-  } else {
-    if (deltaY > 0) drop();
+    deltaX > 0 ? move(1) : move(-1);
+  } else if (deltaY > 0) {
+    drop();
   }
 });
