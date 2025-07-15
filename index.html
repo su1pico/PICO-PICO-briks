@@ -4,58 +4,79 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Pico-Pico Bricks</title>
+
+  <!-- Tipografia -->
   <link href="https://fonts.googleapis.com/css2?family=Fredoka&display=swap" rel="stylesheet" />
+
+  <!-- Estilos -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div id="game-container">
     <h1>Pico-Pico Bricks</h1>
 
-    <canvas id="board" width="320" height="640"></canvas>
-    <canvas id="next" width="128" height="128"></canvas>
+    <!-- Canvas de Jogo -->
+    <div class="canvas-wrapper">
+      <canvas id="board" width="320" height="640" aria-label="Área de jogo"></canvas>
+      <canvas id="next" width="128" height="128" aria-label="Próxima peça"></canvas>
+    </div>
 
+    <!-- Informações -->
     <div id="info">
       <span>Nível: <span id="level">1</span></span>
       <span>Pontuação: <span id="score">0</span></span>
       <span>Tempo: <span id="time">00:00</span></span>
     </div>
 
+    <!-- Controles -->
     <div id="controls">
-      <button id="startBtn">Iniciar</button>
-      <button id="resetBtn">🔄 Reiniciar</button>
-      <button id="toggle-sound">🔊 Som</button>
+      <button type="button" id="startBtn">▶️ Iniciar</button>
+      <button type="button" id="resetBtn" aria-label="Reiniciar o jogo">🔄 Reiniciar</button>
+      <button type="button" id="toggle-sound">🔊 Som</button>
     </div>
 
+    <!-- Controles Mobile -->
     <div id="touch-controls">
-      <button id="leftBtn">←</button>
-      <button id="rightBtn">→</button>
-      <button id="downBtn">↓</button>
-      <button id="rotateBtn">⟳</button>
-      <button id="pauseBtn">⏸ Pausar</button>
+      <button type="button" id="leftBtn" aria-label="Mover para a esquerda">←</button>
+      <button type="button" id="rightBtn" aria-label="Mover para a direita">→</button>
+      <button type="button" id="downBtn" aria-label="Mover para baixo">↓</button>
+      <button type="button" id="rotateBtn" aria-label="Rodar peça">⟳</button>
+      <button type="button" id="pauseBtn" aria-label="Pausar o jogo">⏸ Pausar</button>
     </div>
 
+    <!-- Ranking -->
     <div id="ranking-container">
       <h2>Top 10 Jogadores</h2>
       <ul id="ranking-list"></ul>
     </div>
 
+    <!-- Modal de Fim de Jogo -->
     <div id="modal">
       <div id="modal-content">
         <h2>Fim de Jogo!</h2>
         <p id="final-score">Pontuação: 0</p>
-        <input type="text" id="player-name" placeholder="O teu nome" />
-        <button id="save-score-btn">Guardar Pontuação</button>
+        <input
+          type="text"
+          id="player-name"
+          placeholder="O teu nome"
+          autocomplete="off"
+          required
+        />
+        <button type="button" id="save-score-btn">Guardar Pontuação</button>
       </div>
     </div>
   </div>
 
   <!-- Sons -->
-  <audio id="musica-fundo" src="musica-fundo.mp3" loop></audio>
+  <audio id="musica-fundo" src="musica-fundo.mp3" loop>
+    O teu navegador não suporta áudio.
+  </audio>
   <audio id="som-rodar" src="rodar.mp3"></audio>
   <audio id="som-colidir" src="colidir.mp3"></audio>
   <audio id="som-pontos" src="pontos.mp3"></audio>
   <audio id="som-perdeu" src="perdeu.mp3"></audio>
 
+  <!-- Script -->
   <script src="tetris.js"></script>
 </body>
 </html>
