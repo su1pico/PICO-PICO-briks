@@ -5,7 +5,6 @@ html, body {
   height: 100%;
   font-family: 'Fredoka', sans-serif;
   background-color: #fdf6e3;
-  overflow: hidden; /* ← impede scroll */
 }
 
 body {
@@ -14,97 +13,83 @@ body {
   align-items: center;
 }
 
-/* === CONTAINER GERAL DO JOGO === */
+/* === CONTAINER DO JOGO === */
 #game-container {
   width: 100%;
   max-width: 420px;
   height: 100vh;
+  background: url('capadojogo.png') no-repeat center center;
+  background-size: contain;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  position: relative;
-  box-sizing: border-box;
   padding: 10px;
-  background-color: transparent;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
 }
 
-/* === FUNDO COM IMAGEM DO PICO-PICO === */
-body::before {
+/* Imagem de fundo com opacidade baixa para não atrapalhar */
+#game-container::before {
   content: "";
-  background: url('capadojogo.png') no-repeat center center;
-  background-size: cover;
   position: absolute;
-  top: 0; left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
+  background: url('capadojogo.png') no-repeat center center;
+  background-size: contain;
   opacity: 0.1;
   z-index: 0;
 }
 
-/* === TÍTULO === */
+/* === TÍTULO DO JOGO === */
 h1 {
-  font-size: 2rem;
+  font-size: 1.8rem;
   color: #fa8231;
+  margin: 0;
   text-shadow: 2px 2px #f7b731;
-  margin: 10px 0;
-  text-align: center;
   z-index: 2;
 }
 
-/* === CANVAS PRINCIPAL DO JOGO === */
-#board {
+/* === CANVAS PRINCIPAL E PRÓXIMA PEÇA === */
+canvas {
   width: 100%;
   max-width: 320px;
-  height: auto;
-  display: block;
   background: transparent;
-  z-index: 2;
+  position: relative;
+  z-index: 1;
 }
 
-/* === CANVAS DA PEÇA SEGUINTE === */
-#next {
-  width: 96px !important;
-  height: 96px !important;
-  margin: 10px 0;
-  background: #222;
-  border-radius: 10px;
-  box-shadow: inset 0 0 10px #f7b731;
-  z-index: 2;
-}
-
-/* === INFO (nível, pontuação, tempo) === */
+/* === INFORMAÇÕES DE JOGO === */
 #info {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   width: 90%;
-  max-width: 300px;
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: bold;
   color: #fa8231;
   text-shadow: 1px 1px #f7b731;
   z-index: 2;
 }
 
-/* === BOTÕES PRINCIPAIS === */
+/* === CONTROLOS DE JOGO === */
 #controls,
 #touch-controls {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 10px; /* ← espaçamento entre botões */
-  margin-top: 10px;
+  gap: 6px;
   z-index: 2;
 }
 
+/* === BOTÕES === */
 button {
   background: #fa8231;
   border: none;
-  padding: 8px 16px;
+  padding: 8px 14px;
   font-weight: bold;
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: white;
-  border-radius: 20px;
+  border-radius: 18px;
   cursor: pointer;
   box-shadow: 0 4px 0 #d35400;
   transition: 0.2s ease;
@@ -120,7 +105,56 @@ button:active {
   box-shadow: none;
 }
 
-/* === MODAL FIM DE JOGO === */
+/* === CAIXA DE CLASSIFICAÇÕES === */
+#ranking-container {
+  width: 90%;
+  max-width: 320px;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 10px;
+  padding: 8px;
+  font-size: 0.8rem;
+  box-shadow: 0 2px 6px rgba(250,130,49,0.15);
+  z-index: 2;
+}
+
+#ranking-container h2 {
+  color: #fa8231;
+  font-size: 1rem;
+  margin: 4px 0;
+  text-shadow: 1px 1px #f7b731;
+}
+
+#ranking-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#ranking-list li {
+  background: #f7b731;
+  margin: 3px 0;
+  padding: 4px;
+  border-radius: 6px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+#ranking-list li:nth-child(1) {
+  background: #fa8231;
+  border: 2px solid #f7b731;
+}
+
+#ranking-list li:nth-child(2) {
+  background: #ffc300;
+}
+
+#ranking-list li:nth-child(3) {
+  background: #d35400;
+}
+
+/* === MODAL DE FIM DE JOGO === */
 #modal {
   position: fixed;
   top: 0; left: 0;
@@ -147,12 +181,7 @@ button:active {
   box-shadow: 0 8px 20px rgba(250,130,49,0.6);
 }
 
-#modal-content h2 {
-  color: #fa8231;
-  margin-bottom: 10px;
-  text-shadow: 1px 1px #f7b731;
-}
-
+/* === INPUT DO NOME DO JOGADOR === */
 #player-name {
   width: 90%;
   padding: 8px;
@@ -161,51 +190,4 @@ button:active {
   border-radius: 10px;
   margin-bottom: 10px;
   text-align: center;
-}
-
-/* === RANKING === */
-#ranking-container {
-  width: 100%;
-  max-width: 320px;
-  background: rgba(255,255,255,0.9);
-  border-radius: 12px;
-  padding: 10px;
-  box-shadow: 0 2px 8px rgba(250,130,49,0.15);
-  z-index: 2;
-}
-
-#ranking-container h2 {
-  color: #fa8231;
-  font-size: 1.1rem;
-  margin-bottom: 10px;
-}
-
-#ranking-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-#ranking-list li {
-  background: #f7b731;
-  margin: 3px 0;
-  padding: 6px;
-  border-radius: 6px;
-  color: #fff;
-  font-weight: 600;
-  font-size: 0.95rem;
-  text-align: center;
-}
-
-#ranking-list li:nth-child(1) {
-  background: #fa8231;
-  border: 2px solid #f7b731;
-}
-
-#ranking-list li:nth-child(2) {
-  background: #ffc300;
-}
-
-#ranking-list li:nth-child(3) {
-  background: #d35400;
 }
