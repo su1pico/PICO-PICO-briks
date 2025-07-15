@@ -11,8 +11,8 @@
   <div id="game-container">
     <h1>Pico-Pico Bricks</h1>
 
-    <canvas id="board" width="320" height="640"></canvas>
-    <canvas id="next" width="128" height="128"></canvas>
+    <canvas id="board"></canvas>
+    <canvas id="next"></canvas>
 
     <div id="info">
       <span>Nível: <span id="level">1</span></span>
@@ -24,14 +24,15 @@
       <button id="startBtn">Iniciar</button>
       <button id="resetBtn">🔄 Reiniciar</button>
       <button id="toggle-sound">🔊 Som</button>
+      <button id="pauseBtn">⏸ Pausar</button>
     </div>
 
+    <!-- Botões de toque (agora ocultos via CSS para usar gestos) -->
     <div id="touch-controls">
       <button id="leftBtn">←</button>
       <button id="rightBtn">→</button>
       <button id="downBtn">↓</button>
       <button id="rotateBtn">⟳</button>
-      <button id="pauseBtn">⏸ Pausar</button>
     </div>
 
     <div id="ranking-container">
