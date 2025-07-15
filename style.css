@@ -2,48 +2,42 @@
 html, body {
   margin: 0;
   padding: 0;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   font-family: 'Fredoka', sans-serif;
-  background-color: #fdf6e3;
-  display: block;
+
+  background: url('capadojogo.png') no-repeat center center fixed;
+  background-size: cover;
+
+  display: flex;
   justify-content: center;
   align-items: center;
+
+  overflow: hidden; /* 💥 Remove scroll */
 }
 
 /* === CONTAINER DO JOGO === */
 #game-container {
   width: 100%;
-  max-width: 420px; /* Limita a largura máxima em ecrãs grandes */
-  height: 100vh;
-  background: url('capadojogo.png') no-repeat center center;
-  background-size: contain;
+  max-width: 420px;
+  height: 95vh;
+
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+
   padding: 10px;
   box-sizing: border-box;
   position: relative;
   z-index: 1;
+
+  background-color: rgba(255, 255, 255, 0.85);
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
-/* Imagem de fundo com opacidade baixa para não distrair o jogador */
-#game-container {
-  width: 100%;
-  max-width: 420px;
-  height: auto; /* Deixa altura fluir naturalmente */
-  background: url('capadojogo.png') no-repeat center center;
-  background-size: contain;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 10px;
-  box-sizing: border-box;
-  position: relative;
-  z-index: 1;
-}
-
-/* === TÍTULO DO JOGO === */
+/* === TÍTULO === */
 h1 {
   font-size: 1.8rem;
   color: #fa8231;
@@ -57,14 +51,14 @@ h1 {
 #board {
   width: 100%;
   max-width: 320px;
-  aspect-ratio: 1 / 2; /* Mantém proporção 320x640 */
-  background: #fff;
+  aspect-ratio: 1 / 2; /* Mantém proporção de Tetris */
+  background: transparent;
   display: block;
-  z-index: 2;
-  box-shadow: 0 0 6px rgba(0,0,0,0.2); /* Apenas para realce */
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+  z-index: 1;
 }
 
-/* === CANVAS DA PRÓXIMA PEÇA === */
+/* === PRÓXIMA PEÇA === */
 #next {
   width: 72px;
   height: 72px;
@@ -75,7 +69,7 @@ h1 {
   z-index: 1;
 }
 
-/* === INFORMAÇÕES DO JOGO === */
+/* === INFO DO JOGO === */
 #info {
   display: flex;
   justify-content: space-around;
@@ -87,23 +81,13 @@ h1 {
   z-index: 2;
 }
 
-/* === CONTROLOS DE JOGO (Botões principais) === */
-#controls {
+/* === CONTROLES === */
+#controls, #touch-controls {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 6px;
   margin-top: 8px;
-  z-index: 2;
-}
-
-/* === CONTROLOS TÁTEIS (Mobile) === */
-#touch-controls {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 6px;
-  margin-top: 4px;
   z-index: 2;
 }
 
@@ -131,7 +115,7 @@ button:active {
   box-shadow: none;
 }
 
-/* === CLASSIFICAÇÕES (Ranking) === */
+/* === RANKING === */
 #ranking-container {
   width: 100%;
   max-width: 320px;
@@ -207,7 +191,7 @@ button:active {
   box-shadow: 0 8px 20px rgba(250,130,49,0.6);
 }
 
-/* === INPUT DO NOME DO JOGADOR === */
+/* === INPUT DO NOME === */
 #player-name {
   width: 90%;
   padding: 8px;
@@ -218,7 +202,7 @@ button:active {
   text-align: center;
 }
 
-/* === AJUSTES RESPONSIVOS === */
+/* === RESPONSIVO === */
 @media (max-width: 400px) {
   h1 {
     font-size: 1.4rem;
@@ -233,26 +217,5 @@ button:active {
   #next {
     width: 64px;
     height: 64px;
-  }
-}
-
-@media (max-width: 480px) {
-  #game-container {
-    max-width: 100%;
-    padding: 8px;
-    background-size: cover; /* Melhor preenchimento para telas pequenas */
-  }
-
-  #board {
-    max-width: 280px;
-  }
-
-  #next {
-    width: 64px;
-    height: 64px;
-  }
-
-  #ranking-container {
-    font-size: 0.75rem;
   }
 }
