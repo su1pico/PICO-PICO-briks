@@ -1,42 +1,47 @@
 html, body {
+  height: 100%;
   margin: 0;
   padding: 0;
-  height: 100%;
-  overflow: hidden; /* evita scroll */
+  overflow: hidden;
 }
 
 body {
   background: url('capadojogo.png') no-repeat center center fixed;
   background-size: contain;
-  background-color: #fdf6e3;
   font-family: 'Fredoka', sans-serif;
-  color: #333;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  color: #333;
   user-select: none;
+  position: fixed;
+  width: 100%;
 }
 
-canvas {
-  background-color: transparent !important;
-  display: block;
-  margin: 0 auto;
-}
-
+/* CONTAINER DO JOGO */
 #game-container {
   text-align: center;
   padding: 20px;
-  /* fundo removido */
-  background: none;
+  background: none; /* total transparência */
   max-width: 420px;
+  width: 100%;
   margin: auto;
   border-radius: 16px;
   box-shadow: none;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
 }
 
+/* CANVAS */
+canvas {
+  background-color: transparent !important;
+  display: block;
+  margin: 0 auto;
+}
+
+/* TÍTULO */
 h1 {
   font-weight: 700;
   margin-bottom: 15px;
@@ -45,6 +50,7 @@ h1 {
   text-shadow: 2px 2px #f7b731;
 }
 
+/* INFO */
 #info {
   display: flex;
   justify-content: space-around;
@@ -55,6 +61,7 @@ h1 {
   text-shadow: 1px 1px #f7b731;
 }
 
+/* PRÓXIMA PEÇA */
 #next {
   background: #222;
   border-radius: 10px;
@@ -62,6 +69,7 @@ h1 {
   margin: 10px auto;
 }
 
+/* BOTÕES */
 #controls {
   margin-top: 10px;
 }
@@ -91,6 +99,7 @@ button:active {
   transform: translateY(2px);
 }
 
+/* MODAL DE GAME OVER */
 #modal {
   position: fixed;
   top: 0; left: 0;
@@ -128,6 +137,7 @@ button:active {
   }
 }
 
+/* RANKING */
 #ranking-container {
   background: #fffbe7;
   border-radius: 12px;
@@ -178,10 +188,12 @@ button:active {
 #ranking-list li:nth-child(2) {
   background: #ffc300;
 }
+
 #ranking-list li:nth-child(3) {
   background: #d35400;
 }
 
+/* MOBILE */
 @media (max-width: 480px) {
   #info {
     flex-direction: column;
