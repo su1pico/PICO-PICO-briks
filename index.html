@@ -4,22 +4,31 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Pico-Pico Bricks</title>
+  <!-- Fonte personalizada -->
   <link href="https://fonts.googleapis.com/css2?family=Fredoka&display=swap" rel="stylesheet" />
+  <!-- Ficheiro CSS -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <!-- Container principal do jogo -->
   <div id="game-container">
+    <!-- Título do jogo -->
     <h1>Pico-Pico Bricks</h1>
 
+    <!-- Área de jogo (tabuleiro principal do Tetris) -->
     <canvas id="board" width="320" height="640"></canvas>
+    
+    <!-- Próxima peça (canvas pequeno ao lado ou acima) -->
     <canvas id="next" width="96" height="96"></canvas>
 
+    <!-- Informações do jogo (nível, pontuação, tempo) -->
     <div id="info">
       <span>Nível: <span id="level">1</span></span>
       <span>Pontuação: <span id="score">0</span></span>
       <span>Tempo: <span id="time">00:00</span></span>
     </div>
 
+    <!-- Botões principais de controlo -->
     <div id="controls">
       <button id="startBtn">Iniciar</button>
       <button id="resetBtn">🔄 Reiniciar</button>
@@ -27,6 +36,7 @@
       <button id="pauseBtn">⏸ Pausar</button>
     </div>
 
+    <!-- Controlo tátil para dispositivos móveis -->
     <div id="touch-controls">
       <button id="leftBtn">←</button>
       <button id="rightBtn">→</button>
@@ -34,11 +44,13 @@
       <button id="rotateBtn">⟳</button>
     </div>
 
+    <!-- Classificações dos melhores jogadores -->
     <div id="ranking-container">
       <h2>Top 10 Jogadores</h2>
       <ul id="ranking-list"></ul>
     </div>
 
+    <!-- Modal de fim de jogo -->
     <div id="modal">
       <div id="modal-content">
         <h2>Fim de Jogo!</h2>
@@ -49,12 +61,14 @@
     </div>
   </div>
 
+  <!-- Sons do jogo -->
   <audio id="musica-fundo" src="musica-fundo.mp3" loop></audio>
   <audio id="som-rodar" src="rodar.mp3"></audio>
   <audio id="som-colidir" src="colidir.mp3"></audio>
   <audio id="som-pontos" src="pontos.mp3"></audio>
   <audio id="som-perdeu" src="perdeu.mp3"></audio>
 
+  <!-- Script principal do jogo -->
   <script src="tetris.js"></script>
 </body>
 </html>
