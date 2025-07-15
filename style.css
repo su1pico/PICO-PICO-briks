@@ -46,8 +46,8 @@ h1 {
 /* === TABULEIRO PRINCIPAL === */
 #board {
   width: 100%;
-  max-width:240px;
-  aspect-ratio: 3 / 5; /* mais curto
+  max-width: 320px;
+  aspect-ratio: 1 / 1.6; /* ou até 1 / 1.5 */
   background: transparent;
   box-shadow: 0 0 8px rgba(0,0,0,0.1);
 }
@@ -197,4 +197,3 @@ button:active {
     height: 64px;
   }
 }
-
