@@ -4,15 +4,23 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Pico-Pico Bricks</title>
+
+  <!-- Fonte personalizada -->
   <link href="https://fonts.googleapis.com/css2?family=Fredoka&display=swap" rel="stylesheet" />
+
+  <!-- Ficheiro CSS -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <!-- Fundo com imagem (usado apenas aqui) -->
   <div id="game-layout">
+
+    <!-- Título -->
     <h1>Pico-Pico Bricks</h1>
 
+    <!-- Área principal do jogo -->
     <div id="game-container">
-      <!-- Área de jogo -->
+      <!-- Tabuleiro principal -->
       <canvas id="board" width="320" height="640"></canvas>
 
       <!-- Próxima peça -->
@@ -25,7 +33,7 @@
         <span>Tempo: <span id="time">00:00</span></span>
       </div>
 
-      <!-- Controlo -->
+      <!-- Botões principais -->
       <div id="controls">
         <button id="startBtn">Iniciar</button>
         <button id="resetBtn">🔄 Reiniciar</button>
@@ -33,7 +41,7 @@
         <button id="pauseBtn">⏸ Pausar</button>
       </div>
 
-      <!-- Teclas móveis -->
+      <!-- Controlo tátil (teclas móveis) -->
       <div id="touch-controls">
         <button id="leftBtn">←</button>
         <button id="rightBtn">→</button>
@@ -47,7 +55,7 @@
         <ul id="ranking-list"></ul>
       </div>
 
-      <!-- Modal -->
+      <!-- Modal de fim de jogo -->
       <div id="modal">
         <div id="modal-content">
           <h2>Fim de Jogo!</h2>
@@ -56,8 +64,8 @@
           <button id="save-score-btn">Guardar Pontuação</button>
         </div>
       </div>
-    </div> <!-- Fim do game-container -->
-  </div> <!-- Fim do game-layout -->
+    </div>
+  </div>
 
   <!-- Sons -->
   <audio id="musica-fundo" src="musica-fundo.mp3" loop></audio>
@@ -66,7 +74,7 @@
   <audio id="som-pontos" src="pontos.mp3"></audio>
   <audio id="som-perdeu" src="perdeu.mp3"></audio>
 
-  <!-- Script -->
+  <!-- Script principal -->
   <script src="tetris.js"></script>
 </body>
 </html>
