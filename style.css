@@ -5,7 +5,7 @@ html, body {
   height: 100%;
   font-family: 'Fredoka', sans-serif;
   background-color: #fdf6e3;
-  display: flex;
+  display: block;
   justify-content: center;
   align-items: center;
 }
@@ -28,14 +28,19 @@ html, body {
 }
 
 /* Imagem de fundo com opacidade baixa para não distrair o jogador */
-#game-container::before {
-  content: "";
-  position: absolute;
-  inset: 0;
+#game-container {
+  width: 100%;
+  max-width: 420px;
+  height: auto; /* Deixa altura fluir naturalmente */
   background: url('capadojogo.png') no-repeat center center;
   background-size: contain;
-  opacity: 0.1;
-  z-index: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
 }
 
 /* === TÍTULO DO JOGO === */
@@ -51,10 +56,12 @@ h1 {
 /* === CANVAS PRINCIPAL === */
 #board {
   width: 100%;
-  max-width: 320px; /* Adapta para ecrãs pequenos */
-  height: auto;
-  background: #fff; /* Garantia de visibilidade em fundo claro */
-  z-index: 1;
+  max-width: 320px;
+  aspect-ratio: 1 / 2; /* Mantém proporção 320x640 */
+  background: #fff;
+  display: block;
+  z-index: 2;
+  box-shadow: 0 0 6px rgba(0,0,0,0.2); /* Apenas para realce */
 }
 
 /* === CANVAS DA PRÓXIMA PEÇA === */
@@ -226,5 +233,26 @@ button:active {
   #next {
     width: 64px;
     height: 64px;
+  }
+}
+
+@media (max-width: 480px) {
+  #game-container {
+    max-width: 100%;
+    padding: 8px;
+    background-size: cover; /* Melhor preenchimento para telas pequenas */
+  }
+
+  #board {
+    max-width: 280px;
+  }
+
+  #next {
+    width: 64px;
+    height: 64px;
+  }
+
+  #ranking-container {
+    font-size: 0.75rem;
   }
 }
