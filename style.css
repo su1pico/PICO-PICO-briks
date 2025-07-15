@@ -5,9 +5,6 @@ html, body {
   height: 100%;
   font-family: 'Fredoka', sans-serif;
   background-color: #fdf6e3;
-}
-
-body {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -16,7 +13,7 @@ body {
 /* === CONTAINER DO JOGO === */
 #game-container {
   width: 100%;
-  max-width: 420px;
+  max-width: 420px; /* Limita a largura máxima em ecrãs grandes */
   height: 100vh;
   background: url('capadojogo.png') no-repeat center center;
   background-size: contain;
@@ -30,7 +27,7 @@ body {
   z-index: 1;
 }
 
-/* Imagem de fundo com opacidade baixa para não atrapalhar */
+/* Imagem de fundo com opacidade baixa para não distrair o jogador */
 #game-container::before {
   content: "";
   position: absolute;
@@ -48,22 +45,34 @@ h1 {
   margin: 0;
   text-shadow: 2px 2px #f7b731;
   z-index: 2;
+  text-align: center;
 }
 
-/* === CANVAS PRINCIPAL E PRÓXIMA PEÇA === */
-canvas {
+/* === CANVAS PRINCIPAL === */
+#board {
   width: 100%;
-  max-width: 320px;
-  background: transparent;
-  position: relative;
+  max-width: 320px; /* Adapta para ecrãs pequenos */
+  height: auto;
+  background: #fff; /* Garantia de visibilidade em fundo claro */
   z-index: 1;
 }
 
-/* === INFORMAÇÕES DE JOGO === */
+/* === CANVAS DA PRÓXIMA PEÇA === */
+#next {
+  width: 72px;
+  height: 72px;
+  margin-top: 5px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 8px;
+  box-shadow: 0 0 4px rgba(0,0,0,0.1);
+  z-index: 1;
+}
+
+/* === INFORMAÇÕES DO JOGO === */
 #info {
   display: flex;
   justify-content: space-around;
-  width: 90%;
+  width: 100%;
   font-size: 0.9rem;
   font-weight: bold;
   color: #fa8231;
@@ -71,13 +80,23 @@ canvas {
   z-index: 2;
 }
 
-/* === CONTROLOS DE JOGO === */
-#controls,
+/* === CONTROLOS DE JOGO (Botões principais) === */
+#controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 8px;
+  z-index: 2;
+}
+
+/* === CONTROLOS TÁTEIS (Mobile) === */
 #touch-controls {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 6px;
+  margin-top: 4px;
   z-index: 2;
 }
 
@@ -105,9 +124,9 @@ button:active {
   box-shadow: none;
 }
 
-/* === CAIXA DE CLASSIFICAÇÕES === */
+/* === CLASSIFICAÇÕES (Ranking) === */
 #ranking-container {
-  width: 90%;
+  width: 100%;
   max-width: 320px;
   background: rgba(255, 255, 255, 0.85);
   border-radius: 10px;
@@ -190,4 +209,22 @@ button:active {
   border-radius: 10px;
   margin-bottom: 10px;
   text-align: center;
+}
+
+/* === AJUSTES RESPONSIVOS === */
+@media (max-width: 400px) {
+  h1 {
+    font-size: 1.4rem;
+  }
+  button {
+    font-size: 0.8rem;
+    padding: 6px 10px;
+  }
+  #info {
+    font-size: 0.75rem;
+  }
+  #next {
+    width: 64px;
+    height: 64px;
+  }
 }
