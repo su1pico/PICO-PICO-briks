@@ -353,9 +353,8 @@ function resizeCanvas() {
 
   canvas.width = idealWidth;
   canvas.height = idealHeight;
-
-  nextCanvas.width = idealWidth / 3;
-  nextCanvas.height = idealWidth / 3;
+  nextCanvas.width = 100;
+  nextCanvas.height = 100;
 }
 
 window.addEventListener("resize", resizeCanvas);
