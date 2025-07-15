@@ -7,7 +7,7 @@ html, body {
   font-family: 'Fredoka', sans-serif;
 
   background: url('capadojogo.png') no-repeat center center fixed;
-  background-size: cover;
+  background-size:contain;
 
   display: flex;
   justify-content: center;
@@ -16,25 +16,27 @@ html, body {
   overflow: hidden; /* 💥 Remove scroll */
 }
 
-/* === CONTAINER DO JOGO === */
-#game-container {
-  width: 100%;
-  max-width: 420px;
-  height: 95vh;
+/* === CONTAINER GERAL COM A IMAGEM === */
+#game-layout {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background: url('capadojogo.png') no-repeat center center;
+  background-size: cover;
+}
 
+/* === ÁREA DO JOGO (CANVAS) === */
+#game-container {
+  position: absolute;
+  top: 24%;      /* AJUSTA: depende de onde está o "buraco" na imagem para o jogo */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 320px;
+  height: 400px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   align-items: center;
-
-  padding: 10px;
-  box-sizing: border-box;
-  position: relative;
-  z-index: 1;
-
-  background-color: rgba(255, 255, 255, 0.85);
-  border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  z-index: 2;
 }
 
 /* === TÍTULO === */
