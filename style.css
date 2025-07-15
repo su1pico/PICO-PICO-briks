@@ -5,38 +5,33 @@ html, body {
   width: 100vw;
   height: 100vh;
   font-family: 'Fredoka', sans-serif;
-
-  /* ⛔ REMOVIDO: fundo duplicado que causava erros */
-  /* background: url('capadojogo.png') no-repeat center center fixed;
-     background-size: contain; */
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  overflow: hidden; /* Sem scroll */
+  overflow: hidden; /* sem scroll */
 }
 
-/* === IMAGEM DE FUNDO — usada corretamente aqui === */
+/* === LAYOUT COM IMAGEM DE FUNDO === */
 #game-layout {
-  position: relative;
   width: 100vw;
   height: 100vh;
   background: url('capadojogo.png') no-repeat center center;
-  background-size: contain; /* ou 'cover', se preferires */
+  background-size: contain; /* mantém a imagem visível sem cortar */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
 
-/* === CONTAINER DO JOGO === */
+/* === CONTAINER CENTRAL DO JOGO === */
 #game-container {
-  position: absolute;
-  top: 24%; /* ajusta conforme necessário */
-  left: 50%;
-  transform: translateX(-50%);
   width: 320px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 10px;
+  padding: 10px;
   z-index: 2;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 16px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.15);
 }
 
 /* === TÍTULO === */
@@ -45,7 +40,6 @@ h1 {
   color: #fa8231;
   margin: 0;
   text-shadow: 2px 2px #f7b731;
-  z-index: 2;
   text-align: center;
 }
 
@@ -55,20 +49,16 @@ h1 {
   max-width: 320px;
   aspect-ratio: 1 / 2;
   background: transparent;
-  display: block;
   box-shadow: 0 0 8px rgba(0,0,0,0.1);
-  z-index: 1;
 }
 
 /* === PRÓXIMA PEÇA === */
 #next {
   width: 72px;
   height: 72px;
-  margin-top: 5px;
   background: rgba(255, 255, 255, 0.6);
   border-radius: 8px;
   box-shadow: 0 0 4px rgba(0,0,0,0.1);
-  z-index: 1;
 }
 
 /* === INFORMAÇÕES === */
@@ -80,7 +70,6 @@ h1 {
   font-weight: bold;
   color: #fa8231;
   text-shadow: 1px 1px #f7b731;
-  z-index: 2;
 }
 
 /* === CONTROLES === */
@@ -89,7 +78,6 @@ h1 {
   flex-wrap: wrap;
   justify-content: center;
   gap: 6px;
-  margin-top: 8px;
   z-index: 2;
 }
 
@@ -106,12 +94,10 @@ button {
   box-shadow: 0 4px 0 #d35400;
   transition: 0.2s ease;
 }
-
 button:hover {
   background: #f7b731;
   color: #222;
 }
-
 button:active {
   transform: translateY(2px);
   box-shadow: none;
@@ -120,28 +106,23 @@ button:active {
 /* === RANKING === */
 #ranking-container {
   width: 100%;
-  max-width: 320px;
   background: rgba(255, 255, 255, 0.85);
   border-radius: 10px;
   padding: 8px;
   font-size: 0.8rem;
   box-shadow: 0 2px 6px rgba(250,130,49,0.15);
-  z-index: 2;
 }
-
 #ranking-container h2 {
   color: #fa8231;
   font-size: 1rem;
   margin: 4px 0;
   text-shadow: 1px 1px #f7b731;
 }
-
 #ranking-list {
   list-style: none;
   padding: 0;
   margin: 0;
 }
-
 #ranking-list li {
   background: #f7b731;
   margin: 3px 0;
@@ -152,16 +133,13 @@ button:active {
   font-size: 0.9rem;
   text-align: center;
 }
-
 #ranking-list li:nth-child(1) {
   background: #fa8231;
   border: 2px solid #f7b731;
 }
-
 #ranking-list li:nth-child(2) {
   background: #ffc300;
 }
-
 #ranking-list li:nth-child(3) {
   background: #d35400;
 }
@@ -178,11 +156,9 @@ button:active {
   justify-content: center;
   z-index: 999;
 }
-
 #modal.show {
   display: flex;
 }
-
 #modal-content {
   background: white;
   padding: 20px;
@@ -221,3 +197,4 @@ button:active {
     height: 64px;
   }
 }
+
