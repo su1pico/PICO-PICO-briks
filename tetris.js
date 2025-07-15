@@ -95,21 +95,11 @@ function createMatrix(w, h) {
 }
 
 function drawMatrix(matrix, offset, context = ctx) {
-  if (!matrix) return; // ← PREVINE ERRO
+  if (!matrix) return;
 
   matrix.forEach((row, y) => {
     row.forEach((value, x) => {
       if (value !== 0) {
-        ctx.fillStyle = colors[value];
-        ctx.fillRect(
-          x + offset.x,
-          y + offset.y,
-          1, 1
-        );
-      }
-    });
-  });
-}
         const color = COLORS[value];
         const gx = x + offset.x;
         const gy = y + offset.y;
@@ -128,6 +118,7 @@ function drawMatrix(matrix, offset, context = ctx) {
 
         context.fillRect(gx * BLOCK_SIZE, gy * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
         context.strokeRect(gx * BLOCK_SIZE, gy * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+
         context.shadowColor = "transparent";
         context.shadowBlur = 0;
       }
