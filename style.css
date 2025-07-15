@@ -1,38 +1,43 @@
+/* === RESET & BASE === */
 html, body {
   height: 100%;
   margin: 0;
   padding: 0;
-}
-
-body {
-  background: url('capadojogo.png') no-repeat center center fixed;
-  background-size: contain;
-  background-color: #fdf6e3; /* cor para as faixas laterais */
   font-family: 'Fredoka', sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
   color: #333;
   user-select: none;
 }
 
-canvas {
-  background-color: transparent !important;
-  display: block;
-  margin: 0 auto;
+/* === BACKGROUND === */
+body {
+  background: url('capadojogo.png') no-repeat center center fixed;
+  background-size: contain;
+  background-color: #fdf6e3; /* cor de fundo lateral */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
+/* === CONTAINERS === */
 #game-container {
   text-align: center;
   padding: 20px;
   background-color: rgba(255, 255, 255, 0.9);
   max-width: 420px;
-  margin: 0 auto;
   border-radius: 16px;
   box-shadow: 0 0 20px rgba(0,0,0,0.2);
+  width: 100%;
 }
 
+.canvas-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+/* === HEADINGS === */
 h1 {
   font-weight: 700;
   margin-bottom: 15px;
@@ -41,16 +46,14 @@ h1 {
   text-shadow: 2px 2px #f7b731;
 }
 
-#game {
-  background: rgba(255, 255, 255, 0.9);
-  border: 5px solid #fa8231;
-  border-radius: 20px;
-  padding: 15px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.2);
-  margin: 0 auto 15px;
-  width: 320px;
+/* === CANVAS === */
+canvas {
+  display: block;
+  margin: 0 auto;
+  background-color: transparent !important;
 }
 
+/* === INFO BAR === */
 #info {
   display: flex;
   justify-content: space-around;
@@ -61,19 +64,7 @@ h1 {
   text-shadow: 1px 1px #f7b731;
 }
 
-#next {
-  background: #222;
-  border-radius: 10px;
-  box-shadow: inset 0 0 10px #f7b731;
-  margin-left: 10px;
-  display: block;
-  margin: 0 auto;
-}
-
-#controls {
-  margin-top: 10px;
-}
-
+/* === BUTTONS === */
 button {
   background: #fa8231;
   border: none;
@@ -99,21 +90,63 @@ button:active {
   transform: translateY(2px);
 }
 
+/* === GAME BOARD === */
+#game {
+  background: rgba(255, 255, 255, 0.9);
+  border: 5px solid #fa8231;
+  border-radius: 20px;
+  padding: 15px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.2);
+  margin-bottom: 15px;
+  width: 320px;
+}
+
+/* === TOUCH CONTROLS === */
+#touch-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+#touch-controls button {
+  padding: 10px 14px;
+  font-size: 18px;
+  border-radius: 8px;
+  border: 2px solid #333;
+  background-color: #444;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+#touch-controls button:hover {
+  background-color: #555;
+}
+
+/* === NEXT PIECE PREVIEW === */
+#next {
+  background: #222;
+  border-radius: 10px;
+  box-shadow: inset 0 0 10px #f7b731;
+}
+
+/* === MODAL === */
 #modal {
   position: fixed;
-  top: 0;
-  left: 0;
+  top: 0; left: 0;
   width: 100%;
   height: 100%;
   background-color: rgba(0,0,0,0.5);
   display: none;
   align-items: center;
   justify-content: center;
+  z-index: 999;
 }
 
 #modal.show {
-  opacity: 1;
-  pointer-events: auto;
+  display: flex;
 }
 
 #modal-content {
@@ -125,17 +158,6 @@ button:active {
   text-align: center;
   animation: modalPop 0.4s ease forwards;
   box-shadow: 0 8px 25px rgba(250, 130, 49, 0.6);
-}
-
-@keyframes modalPop {
-  from {
-    transform: scale(0.7);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
 }
 
 #modal-content h2 {
@@ -150,6 +172,7 @@ button:active {
   margin-bottom: 10px;
 }
 
+/* === INPUT === */
 #player-name {
   width: 80%;
   padding: 8px;
@@ -163,6 +186,7 @@ button:active {
   text-align: center;
 }
 
+/* === SAVE BUTTON === */
 #save-score-btn {
   background: #fa8231;
   padding: 10px 25px;
@@ -174,7 +198,6 @@ button:active {
   cursor: pointer;
   box-shadow: 0 5px 0 #d35400;
   transition: background 0.3s ease;
-  font-family: 'Fredoka', sans-serif;
 }
 
 #save-score-btn:hover {
@@ -187,93 +210,12 @@ button:active {
   transform: translateY(2px);
 }
 
-/* Responsivo */
-@media (max-width: 480px) {
-  #game-container {
-    padding: 15px;
-  }
-
-  h1 {
-    font-size: 2rem;
-  }
-
-  #info {
-    font-size: 1rem;
-    flex-direction: column;
-    gap: 5px;
-  }
-
-  #game {
-    width: 280px !important;
-    height: 560px !important;
-  }
-
-  #next {
-    width: 100px !important;
-    height: 100px !important;
-    margin-left: 0;
-    margin-top: 10px;
-  }
-
-  button {
-    width: 100%;
-    margin: 5px 0;
-  }
-}
-
-<style>
-  .controls {
-    margin-top: 10px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
-  }
-
-  .controls button {
-    padding: 10px 14px;
-    font-size: 18px;
-    border-radius: 8px;
-    border: 2px solid #333;
-    background-color: #444;
-    color: #fff;
-    cursor: pointer;
-    font-family: "Fredoka", sans-serif;
-    transition: background-color 0.2s;
-  }
-
-  .controls button:hover {
-    background-color: #555;
-  }
-
-  #modal {
-    display: none;
-    position: fixed;
-    z-index: 999;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.75);
-    justify-content: center;
-    align-items: center;
-  }
-
-  #modal.show {
-    display: flex;
-  }
-
-  #modal-content {
-    background: white;
-    padding: 2em;
-    border-radius: 10px;
-    text-align: center;
-    font-family: "Fredoka", sans-serif;
-  }
-
+/* === RANKING === */
 #ranking-container {
   background: #fffbe7;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(250, 130, 49, 0.15);
-  padding: 20px 10px 15px 10px;
+  padding: 20px 10px 15px;
   margin-top: 20px;
   max-width: 360px;
   margin-left: auto;
@@ -323,7 +265,54 @@ button:active {
   background: #ffc300;
   color: #fff;
 }
+
 #ranking-list li:nth-child(3) {
   background: #d35400;
   color: #fff;
+}
+
+/* === ANIMAÇÕES === */
+@keyframes modalPop {
+  from {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* === RESPONSIVO === */
+@media (max-width: 480px) {
+  #game-container {
+    padding: 15px;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  #info {
+    font-size: 1rem;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  #game {
+    width: 280px !important;
+    height: 560px !important;
+  }
+
+  #next {
+    width: 100px !important;
+    height: 100px !important;
+    margin-left: 0;
+    margin-top: 10px;
+  }
+
+  button {
+    width: 100%;
+    margin: 5px 0;
+  }
 }
