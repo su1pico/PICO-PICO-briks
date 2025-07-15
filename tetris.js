@@ -20,12 +20,27 @@ let paused = false;
 
 const COLS = 10;
 const ROWS = 20;
-const BLOCK_SIZE = 32;
+let BLOCK_SIZE = 32;
 
-canvas.width = COLS * BLOCK_SIZE;
-canvas.height = ROWS * BLOCK_SIZE;
-nextCanvas.width = 4 * BLOCK_SIZE;
-nextCanvas.height = 4 * BLOCK_SIZE;
+function ajustarBlockSize() {
+  const largura = canvas.parentElement.clientWidth;
+  BLOCK_SIZE = Math.floor(largura / COLS);
+  canvas.width = COLS * BLOCK_SIZE;
+  canvas.height = ROWS * BLOCK_SIZE;
+  nextCanvas.width = 4 * BLOCK_SIZE;
+  nextCanvas.height = 4 * BLOCK_SIZE;
+}
+
+window.addEventListener("resize", () => {
+  ajustarBlockSize();
+  draw(); // redesenha com novo tamanho
+  drawNext();
+});
+window.addEventListener("load", () => {
+  ajustarBlockSize();
+  draw();
+  drawNext();
+});
 
 const COLORS = [
   null,
