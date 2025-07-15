@@ -95,9 +95,21 @@ function createMatrix(w, h) {
 }
 
 function drawMatrix(matrix, offset, context = ctx) {
+  if (!matrix) return; // ← PREVINE ERRO
+
   matrix.forEach((row, y) => {
     row.forEach((value, x) => {
       if (value !== 0) {
+        ctx.fillStyle = colors[value];
+        ctx.fillRect(
+          x + offset.x,
+          y + offset.y,
+          1, 1
+        );
+      }
+    });
+  });
+}
         const color = COLORS[value];
         const gx = x + offset.x;
         const gy = y + offset.y;
@@ -203,6 +215,15 @@ function updateScore() {
 // ======================
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  // Previne erro se player.matrix ainda não estiver carregado
+  if (player.matrix) {
+    drawMatrix(player.matrix, player.pos);
+  }
+  // Se tiveres um canvas para próxima peça:
+  if (nextPiece && nextPiece.matrix) {
+    drawNext(nextPiece.matrix); // ← ou função equivalente
+  }
+}
   ctx.fillStyle = "rgba(253, 246, 227, 0.25)";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   drawMatrix(board, { x: 0, y: 0 });
@@ -274,6 +295,8 @@ function update(time = 0) {
 // ▶️ 12. Início e Reinício
 // ======================
 function startGame() {
+  player.matrix = createPiece(randomType());
+  player.pos = { x: 3, y: 0 };
   board = createMatrix(COLS, ROWS);
   score = 0;
   level = 1;
