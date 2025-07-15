@@ -8,53 +8,55 @@ html, body {
 
 body {
   background: url('capadojogo.png') no-repeat center center fixed;
-  background-size: contain;
+  background-size: cover;
   display: flex;
   justify-content: center;
   align-items: flex-start;
   flex-direction: column;
-  padding: 10px;
+  min-height: 100vh;
+  padding-top: 60px;
 }
 
+/* Centraliza e remove o fundo esbranquiçado */
 #game-container {
   max-width: 480px;
-  width: 100%;
+  width: 90%;
   margin: auto;
-  padding: 10px;
-  background-color: rgba(255,255,255,0.95);
-  border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
   text-align: center;
 }
 
+h1 {
+  color: #fa8231;
+  text-shadow: 1px 1px 2px #fff;
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+/* O canvas vai ter tamanho variável, definido via JS */
 canvas {
-  background-color: transparent !important
   width: 100%;
   height: auto;
   display: block;
   margin: 0 auto;
+  background-color: transparent !important;
 }
 
+#next {
+  background: #222;
+  border-radius: 10px;
+  box-shadow: inset 0 0 10px #f7b731;
+  margin: 10px auto;
+}
+
+/* Resto igual */
 #info {
   font-weight: 700;
   display: flex;
   justify-content: space-around;
   flex-wrap: wrap;
   margin: 10px 0;
-  font-weight: bold;
   color: #fa8231;
   text-shadow: 1px 1px #f7b731;
-}
-
-#next {
-  background: #222;
-  width: 100px;
-  height: 100px;
-  margin: 10px auto;
-  display: block;
-  background: #222;
-  border-radius: 10px;
-  box-shadow: inset 0 0 10px #f7b731;
 }
 
 button {
@@ -86,7 +88,6 @@ button:active {
   flex: 1 1 45%;
 }
 
-/* Ocultar controles táteis se usarmos gestos */
 #touch-controls {
   display: none;
 }
@@ -121,11 +122,4 @@ button:active {
   width: 90%;
   max-width: 320px;
   text-align: center;
-}
-
-/* Mobile extra ajuste */
-@media (max-height: 700px) {
-  #board {
-    height: 60vh !important;
-  }
 }
