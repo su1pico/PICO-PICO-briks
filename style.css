@@ -6,33 +6,33 @@ html, body {
   height: 100vh;
   font-family: 'Fredoka', sans-serif;
 
-  background: url('capadojogo.png') no-repeat center center fixed;
-  background-size:contain;
+  /* ⛔ REMOVIDO: fundo duplicado que causava erros */
+  /* background: url('capadojogo.png') no-repeat center center fixed;
+     background-size: contain; */
 
   display: flex;
   justify-content: center;
   align-items: center;
 
-  overflow: hidden; /* 💥 Remove scroll */
+  overflow: hidden; /* Sem scroll */
 }
 
-/* === CONTAINER GERAL COM A IMAGEM === */
+/* === IMAGEM DE FUNDO — usada corretamente aqui === */
 #game-layout {
   position: relative;
   width: 100vw;
   height: 100vh;
   background: url('capadojogo.png') no-repeat center center;
-  background-size: cover;
+  background-size: contain; /* ou 'cover', se preferires */
 }
 
-/* === ÁREA DO JOGO (CANVAS) === */
+/* === CONTAINER DO JOGO === */
 #game-container {
   position: absolute;
-  top: 24%;      /* AJUSTA: depende de onde está o "buraco" na imagem para o jogo */
+  top: 24%; /* ajusta conforme necessário */
   left: 50%;
   transform: translateX(-50%);
   width: 320px;
-  height: 400px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -49,11 +49,11 @@ h1 {
   text-align: center;
 }
 
-/* === CANVAS PRINCIPAL === */
+/* === TABULEIRO PRINCIPAL === */
 #board {
   width: 100%;
   max-width: 320px;
-  aspect-ratio: 1 / 2; /* Mantém proporção de Tetris */
+  aspect-ratio: 1 / 2;
   background: transparent;
   display: block;
   box-shadow: 0 0 8px rgba(0,0,0,0.1);
@@ -71,7 +71,7 @@ h1 {
   z-index: 1;
 }
 
-/* === INFO DO JOGO === */
+/* === INFORMAÇÕES === */
 #info {
   display: flex;
   justify-content: space-around;
@@ -166,7 +166,7 @@ button:active {
   background: #d35400;
 }
 
-/* === MODAL DE FIM DE JOGO === */
+/* === MODAL === */
 #modal {
   position: fixed;
   top: 0; left: 0;
