@@ -32,8 +32,17 @@ function ajustarBlockSize() {
   nextCanvas.height = 4 * BLOCK_SIZE;
 }
 
-// window.addEventListener("resize", resizeCanvas);
-// window.addEventListener("load", resizeCanvas);
+window.addEventListener("resize", () => {
+  ajustarBlockSize();
+  draw();
+  drawNext();
+});
+
+window.addEventListener("load", () => {
+  ajustarBlockSize();
+  draw();
+  drawNext();
+});
 
 const COLORS = [
   null,
