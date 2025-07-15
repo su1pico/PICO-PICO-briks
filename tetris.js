@@ -1,33 +1,33 @@
-// ======================
-// 🎨 1. Inicialização de Canvas e Elementos DOM
-// ======================
+// 🎨 Inicialização dos canvases de jogo e peça seguinte
 const nextCanvas = document.getElementById("next");
 const nextCtx = nextCanvas.getContext("2d");
 const canvas = document.getElementById("board");
 const ctx = canvas.getContext("2d");
 
+// 🧾 Elementos da interface (nível, pontuação, tempo, botões)
 const levelEl = document.getElementById("level");
 const scoreEl = document.getElementById("score");
 const timeEl = document.getElementById("time");
 const startBtn = document.getElementById("startBtn");
 const toggleSoundBtn = document.getElementById("toggle-sound");
 
+// 🔊 Elementos de áudio
 const musicaFundo = document.getElementById("musica-fundo");
 const somRodar = document.getElementById("som-rodar");
 const somColidir = document.getElementById("som-colidir");
 const somPontos = document.getElementById("som-pontos");
 const somPerdeu = document.getElementById("som-perdeu");
 
+// 🔧 Estado de som e pausa
 let somAtivo = true;
 let paused = false;
 
-// ======================
-// 🔢 2. Configuração do Tabuleiro
-// ======================
+// 📐 Tamanho do tabuleiro
 const COLS = 10;
 const ROWS = 20;
 let BLOCK_SIZE = 32;
 
+// 📏 Ajustar tamanho dos blocos dinamicamente
 function ajustarBlockSize() {
   const largura = canvas.parentElement.clientWidth;
   const maxBlockSize = 28;
@@ -38,21 +38,19 @@ function ajustarBlockSize() {
   nextCanvas.height = 4 * BLOCK_SIZE;
 }
 
+// 📲 Ajuste automático ao redimensionar ou carregar página
 window.addEventListener("resize", () => {
   ajustarBlockSize();
   draw();
   drawNext();
 });
-
 window.addEventListener("load", () => {
   ajustarBlockSize();
   draw();
   drawNext();
 });
 
-// ======================
-// 🧩 3. Definição de Cores e Formatos das Peças
-// ======================
+// 🎨 Paleta de cores e formas das peças
 const COLORS = [
   null,
   "#FF3CAC", "#784BA0", "#29FFC6",
@@ -61,25 +59,21 @@ const COLORS = [
 
 const SHAPES = [
   [],
-  [[1,1,1,1]],
-  [[2,2],[2,2]],
-  [[0,3,0],[3,3,3]],
-  [[4,4,0],[0,4,4]],
-  [[0,5,5],[5,5,0]],
-  [[6,0,0],[6,6,6]],
-  [[0,0,7],[7,7,7]],
+  [[1,1,1,1]],         // I
+  [[2,2],[2,2]],       // O
+  [[0,3,0],[3,3,3]],   // T
+  [[4,4,0],[0,4,4]],   // S
+  [[0,5,5],[5,5,0]],   // Z
+  [[6,0,0],[6,6,6]],   // J
+  [[0,0,7],[7,7,7]]    // L
 ];
 
-// ======================
-// 🧠 4. Estado do Jogo
-// ======================
+// 🎮 Variáveis do jogo
 let board, currentPiece, nextPiece, pos, score, level, linesCleared;
 let dropInterval, dropCounter, lastTime, gameOver, startTime;
 let animationId = null;
 
-// ======================
-// 🔊 5. Função de Áudio
-// ======================
+// 🔈 Função para tocar sons
 function playSound(audio) {
   if (somAtivo) {
     audio.currentTime = 0;
@@ -87,16 +81,13 @@ function playSound(audio) {
   }
 }
 
-// ======================
-// 🔧 6. Lógica de Peças e Colisões
-// ======================
+// 📦 Criação da matriz (tabuleiro)
 function createMatrix(w, h) {
   return Array.from({ length: h }, () => Array(w).fill(0));
 }
 
+// 🧱 Desenhar uma matriz (peça ou tabuleiro)
 function drawMatrix(matrix, offset, context = ctx) {
-  if (!matrix) return;
-
   matrix.forEach((row, y) => {
     row.forEach((value, x) => {
       if (value !== 0) {
@@ -118,7 +109,6 @@ function drawMatrix(matrix, offset, context = ctx) {
 
         context.fillRect(gx * BLOCK_SIZE, gy * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
         context.strokeRect(gx * BLOCK_SIZE, gy * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
-
         context.shadowColor = "transparent";
         context.shadowBlur = 0;
       }
@@ -126,6 +116,7 @@ function drawMatrix(matrix, offset, context = ctx) {
   });
 }
 
+// 💥 Verificar colisão entre peça e tabuleiro
 function collide(board, piece, pos) {
   for (let y = 0; y < piece.length; y++) {
     for (let x = 0; x < piece[y].length; x++) {
@@ -137,6 +128,7 @@ function collide(board, piece, pos) {
   return false;
 }
 
+// 🔗 Fundir peça ao tabuleiro
 function merge(board, piece, pos) {
   piece.forEach((row, y) => {
     row.forEach((value, x) => {
@@ -146,14 +138,13 @@ function merge(board, piece, pos) {
   playSound(somColidir);
 }
 
-// ======================
-// 🔄 7. Rotação e Reset de Peça
-// ======================
+// 🔄 Rodar uma matriz (peça)
 function rotate(matrix, dir) {
   const res = matrix[0].map((_, i) => matrix.map(row => row[i]));
   return dir > 0 ? res.reverse() : res.map(row => row.reverse());
 }
 
+// ♻️ Resetar peça atual e gerar próxima
 function resetPiece() {
   currentPiece = nextPiece;
   nextPiece = randomPiece();
@@ -165,22 +156,21 @@ function resetPiece() {
   }
 }
 
+// 🎲 Gerar peça aleatória
 function randomPiece() {
   const index = Math.floor(Math.random() * (SHAPES.length - 1)) + 1;
   return SHAPES[index].map(row => row.slice());
 }
 
-// ======================
-// ✅ 8. Pontuação, Linhas e Níveis
-// ======================
+// ✂️ Verificar e limpar linhas completas
 function clearLines() {
   let lines = 0;
   outer: for (let y = board.length - 1; y >= 0; y--) {
     for (let x = 0; x < COLS; x++) {
       if (board[y][x] === 0) continue outer;
     }
-    board.splice(y, 1);
-    board.unshift(new Array(COLS).fill(0));
+    const row = board.splice(y, 1)[0].fill(0);
+    board.unshift(row);
     lines++;
     y++;
   }
@@ -196,25 +186,15 @@ function clearLines() {
   updateScore();
 }
 
+// 📊 Atualizar pontuação e nível
 function updateScore() {
   scoreEl.textContent = score;
   levelEl.textContent = level;
 }
 
-// ======================
-// 🖼️ 9. Renderização (Desenhar Jogo)
-// ======================
+// 🖼️ Desenhar o tabuleiro e peça atual
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  // Previne erro se player.matrix ainda não estiver carregado
-  if (player.matrix) {
-    drawMatrix(player.matrix, player.pos);
-  }
-  // Se tiveres um canvas para próxima peça:
-  if (nextPiece && nextPiece.matrix) {
-    drawNext(nextPiece.matrix); // ← ou função equivalente
-  }
-}
   ctx.fillStyle = "rgba(253, 246, 227, 0.25)";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   drawMatrix(board, { x: 0, y: 0 });
@@ -224,6 +204,7 @@ function draw() {
   ctx.strokeRect(0, 0, COLS * BLOCK_SIZE, ROWS * BLOCK_SIZE);
 }
 
+// 🖼️ Desenhar peça seguinte
 function drawNext() {
   nextCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
   const offsetX = Math.floor((4 - nextPiece[0].length) / 2);
@@ -231,9 +212,7 @@ function drawNext() {
   drawMatrix(nextPiece, { x: offsetX, y: offsetY }, nextCtx);
 }
 
-// ======================
-// ⏬ 10. Movimento, Queda e Rotação
-// ======================
+// ⬇️ Cair peça
 function drop() {
   pos.y++;
   if (collide(board, currentPiece, pos)) {
@@ -245,11 +224,13 @@ function drop() {
   dropCounter = 0;
 }
 
+// ⬅️➡️ Mover peça
 function move(dir) {
   pos.x += dir;
   if (collide(board, currentPiece, pos)) pos.x -= dir;
 }
 
+// 🔁 Rodar peça
 function rotatePiece(dir) {
   currentPiece = rotate(currentPiece, dir);
   if (collide(board, currentPiece, pos)) {
@@ -259,35 +240,25 @@ function rotatePiece(dir) {
   }
 }
 
-// ======================
-// ⏱️ 11. Lógica de Atualização (animação e tempo)
-// ======================
+// 🔄 Atualizar jogo a cada frame
 function update(time = 0) {
   if (gameOver || paused) return;
-
   if (!startTime) startTime = time;
   const deltaTime = time - lastTime;
   dropCounter += deltaTime;
   lastTime = time;
-
   if (dropCounter > dropInterval) drop();
-
   const elapsed = Math.floor((time - startTime) / 1000);
   const minutes = String(Math.floor(elapsed / 60)).padStart(2, "0");
   const seconds = String(elapsed % 60).padStart(2, "0");
   timeEl.textContent = `${minutes}:${seconds}`;
-
   draw();
   drawNext();
   animationId = requestAnimationFrame(update);
 }
 
-// ======================
-// ▶️ 12. Início e Reinício
-// ======================
+// ▶️ Iniciar jogo
 function startGame() {
-  player.matrix = createPiece(randomType());
-  player.pos = { x: 3, y: 0 };
   board = createMatrix(COLS, ROWS);
   score = 0;
   level = 1;
@@ -298,7 +269,6 @@ function startGame() {
   gameOver = false;
   startTime = null;
   paused = false;
-
   nextPiece = randomPiece();
   resetPiece();
   updateScore();
@@ -306,15 +276,14 @@ function startGame() {
   animationId = requestAnimationFrame(update);
 }
 
+// 🔁 Reiniciar jogo
 function resetGame() {
   cancelAnimationFrame(animationId);
   musicaFundo.currentTime = 0;
   startGame();
 }
 
-// ======================
-// ⏸️ 13. Pausa e Retomar
-// ======================
+// ⏸ Pausar ou retomar jogo
 function togglePause() {
   paused = !paused;
   if (paused) {
@@ -327,12 +296,11 @@ function togglePause() {
   }
 }
 
-// ======================
-// 🕹️ 14. Controles (Teclado e Botões)
-// ======================
+// 🎮 Eventos de controlo
 startBtn.addEventListener("click", startGame);
 document.getElementById("resetBtn").addEventListener("click", resetGame);
 
+// 🔊 Alternar som
 toggleSoundBtn.addEventListener("click", () => {
   somAtivo = !somAtivo;
   toggleSoundBtn.textContent = somAtivo ? "🔊 Som" : "🔇 Silenciar";
@@ -340,6 +308,7 @@ toggleSoundBtn.addEventListener("click", () => {
   else musicaFundo.pause();
 });
 
+// 🎹 Controlos por teclado
 window.addEventListener("keydown", (e) => {
   if (gameOver) return;
   if (e.key === "p" || e.key === "P") {
@@ -354,9 +323,7 @@ window.addEventListener("keydown", (e) => {
   }
 });
 
-// ======================
-// 🏆 15. Ranking Local (Top 10)
-// ======================
+// 💾 Guardar pontuação
 document.getElementById("save-score-btn").addEventListener("click", () => {
   const name = document.getElementById("player-name").value.trim();
   if (name) {
@@ -371,6 +338,7 @@ document.getElementById("save-score-btn").addEventListener("click", () => {
   }
 });
 
+// 🪦 Modal de fim de jogo
 function showGameOverModal() {
   const modal = document.getElementById("modal");
   const finalScore = document.getElementById("final-score");
@@ -378,6 +346,7 @@ function showGameOverModal() {
   modal.classList.add("show");
 }
 
+// 🏆 Carregar ranking
 function loadRanking() {
   const rankingList = document.getElementById("ranking-list");
   if (!rankingList) return;
@@ -389,23 +358,33 @@ function loadRanking() {
 }
 loadRanking();
 
-// ======================
-// 👆 16. Botões Touch / Mobile
-// ======================
+// ⏸ Botão visual de pausa
 document.getElementById("pauseBtn").addEventListener("click", () => {
   togglePause();
   const btn = document.getElementById("pauseBtn");
   btn.textContent = paused ? "▶ Retomar" : "⏸ Pausar";
 });
 
+// ☝️ Botões de controlo táteis
 document.getElementById("leftBtn").addEventListener("click", () => move(-1));
 document.getElementById("rightBtn").addEventListener("click", () => move(1));
 document.getElementById("downBtn").addEventListener("click", drop);
 document.getElementById("rotateBtn").addEventListener("click", () => rotatePiece(1));
 
-// ======================
-// 📱 17. Gestos de Toque
-// ======================
+// 📱 Ajuste de tamanho para ecrãs mobile
+function resizeCanvas() {
+  const containerWidth = canvas.parentElement.clientWidth;
+  const idealWidth = containerWidth;
+  const idealHeight = idealWidth * (ROWS / COLS);
+  canvas.width = idealWidth;
+  canvas.height = idealHeight;
+  nextCanvas.width = 100;
+  nextCanvas.height = 100;
+}
+window.addEventListener("resize", resizeCanvas);
+window.addEventListener("load", resizeCanvas);
+
+// 🤏 Gestos de toque (início de swipe)
 let startX = 0;
 let startY = 0;
 
@@ -413,24 +392,4 @@ canvas.addEventListener("touchstart", function (e) {
   const touch = e.touches[0];
   startX = touch.clientX;
   startY = touch.clientY;
-});
-
-canvas.addEventListener("touchend", function (e) {
-  const touch = e.changedTouches[0];
-  const deltaX = touch.clientX - startX;
-  const deltaY = touch.clientY - startY;
-
-  const absX = Math.abs(deltaX);
-  const absY = Math.abs(deltaY);
-
-  if (Math.max(absX, absY) < 20) {
-    rotatePiece(1);
-    return;
-  }
-
-  if (absX > absY) {
-    deltaX > 0 ? move(1) : move(-1);
-  } else if (deltaY > 0) {
-    drop();
-  }
 });
