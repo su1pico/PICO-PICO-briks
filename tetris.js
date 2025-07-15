@@ -371,19 +371,6 @@ document.getElementById("rightBtn").addEventListener("click", () => move(1));
 document.getElementById("downBtn").addEventListener("click", drop);
 document.getElementById("rotateBtn").addEventListener("click", () => rotatePiece(1));
 
-// 📱 Ajuste de tamanho para ecrãs mobile
-function resizeCanvas() {
-  const containerWidth = canvas.parentElement.clientWidth;
-  const idealWidth = containerWidth;
-  const idealHeight = idealWidth * (ROWS / COLS);
-  canvas.width = idealWidth;
-  canvas.height = idealHeight;
-  nextCanvas.width = 100;
-  nextCanvas.height = 100;
-}
-window.addEventListener("resize", resizeCanvas);
-window.addEventListener("load", resizeCanvas);
-
 // 🤏 Gestos de toque (início de swipe)
 let startX = 0;
 let startY = 0;
