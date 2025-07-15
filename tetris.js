@@ -24,7 +24,8 @@ let BLOCK_SIZE = 32;
 
 function ajustarBlockSize() {
   const largura = canvas.parentElement.clientWidth;
-  BLOCK_SIZE = Math.floor(largura / COLS);
+  const maxBlockSize = 28;  // limite máximo de tamanho dos blocos
+  BLOCK_SIZE = Math.min(Math.floor(largura / COLS), maxBlockSize);
   canvas.width = COLS * BLOCK_SIZE;
   canvas.height = ROWS * BLOCK_SIZE;
   nextCanvas.width = 4 * BLOCK_SIZE;
