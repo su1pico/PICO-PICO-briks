@@ -330,3 +330,49 @@ document.getElementById("leftBtn").addEventListener("click", () => move(-1));
 document.getElementById("rightBtn").addEventListener("click", () => move(1));
 document.getElementById("downBtn").addEventListener("click", drop);
 document.getElementById("rotateBtn").addEventListener("click", () => rotatePiece(1));
+
+function resizeCanvas() {
+  const containerWidth = canvas.parentElement.clientWidth;
+  const idealWidth = containerWidth;
+  const idealHeight = idealWidth * (ROWS / COLS);
+
+  canvas.width = idealWidth;
+  canvas.height = idealHeight;
+
+  nextCanvas.width = idealWidth / 3;
+  nextCanvas.height = idealWidth / 3;
+}
+
+window.addEventListener("resize", resizeCanvas);
+window.addEventListener("load", resizeCanvas);
+
+// Gestos de toque (mobile)
+let startX = 0;
+let startY = 0;
+
+canvas.addEventListener("touchstart", function (e) {
+  const touch = e.touches[0];
+  startX = touch.clientX;
+  startY = touch.clientY;
+});
+
+canvas.addEventListener("touchend", function (e) {
+  const touch = e.changedTouches[0];
+  const deltaX = touch.clientX - startX;
+  const deltaY = touch.clientY - startY;
+
+  const absX = Math.abs(deltaX);
+  const absY = Math.abs(deltaY);
+
+  if (Math.max(absX, absY) < 20) {
+    rotatePiece(1);
+    return;
+  }
+
+  if (absX > absY) {
+    if (deltaX > 0) move(1);
+    else move(-1);
+  } else {
+    if (deltaY > 0) drop();
+  }
+});
