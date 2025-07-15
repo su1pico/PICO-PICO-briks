@@ -1,61 +1,56 @@
 html, body {
+  height: 100vh;
   margin: 0;
   padding: 0;
-  height: 100%;
+  overflow: hidden; /* evita scroll vertical */
   font-family: 'Fredoka', sans-serif;
   background-color: #fdf6e3;
-}
-
-body {
   background: url('capadojogo.png') no-repeat center center fixed;
   background-size: cover;
+  display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
-  min-height: 100vh;
-  padding-top: 60px;
 }
 
-/* Centraliza e remove o fundo esbranquiçado */
 #game-container {
-  max-width: 480px;
-  width: 95%;
+  max-width: 360px;
+  width: 100%;
   margin: 0 auto;
+  padding: 10px 20px;
+  background: rgba(253, 246, 227, 0.8);
+  border-radius: 10px;
+  box-sizing: border-box;
+  overflow: hidden;
   text-align: center;
-  padding-bottom: 40px;
-  padding-top: 40px;
 }
 
 h1 {
-  font-size: 2rem;
+  font-size: 1.8rem;
+  margin-bottom: 10px;
   color: #fa8231;
-  text-align: center;
-  margin: 0 0 20px 0;
-  padding-top: 10px;
   text-shadow: 1px 1px 2px white;
-  z-index: 10;
-  position: relative;
 }
 
-/* O canvas vai ter tamanho variável, definido via JS */
 canvas {
   width: 100%;
   height: auto;
   display: block;
-  margin: 0 auto;
+  margin: 0 auto 10px;
   background-color: transparent !important;
+  border-radius: 6px;
+  box-shadow: 0 0 8px rgba(250, 130, 49, 0.7);
 }
 
 #next {
-  width: 100px;
-  height: 100px;
+  width: auto;
+  max-width: 120px;
+  height: auto;
+  margin: 10px auto 20px;
   background: #222;
-  margin: 10px auto;
   border-radius: 10px;
   box-shadow: inset 0 0 10px #f7b731;
 }
 
-/* Resto igual */
 #info {
   font-weight: 700;
   display: flex;
@@ -64,6 +59,7 @@ canvas {
   margin: 10px 0;
   color: #fa8231;
   text-shadow: 1px 1px #f7b731;
+  font-size: 0.9rem;
 }
 
 button {
@@ -77,6 +73,8 @@ button {
   border-radius: 10px;
   font-size: 1rem;
   box-shadow: 0 5px 0 #d35400;
+  cursor: pointer;
+  user-select: none;
 }
 
 button:active {
@@ -93,31 +91,26 @@ button:active {
 
 #controls button {
   flex: 1 1 45%;
-}
-
-#touch-controls {
-  display: none;
+  max-width: 170px;
 }
 
 #ranking-container {
-  margin-top: 20px;
+  margin-top: 15px;
   background: #fffbe7;
   border-radius: 12px;
   padding: 10px;
   box-shadow: 0 4px 10px rgba(250, 130, 49, 0.2);
   border: 2px solid #fa8231;
-}
-
-#ranking-container h2 {
-  margin-top: 0;
-  color: #fa8231;
-  font-size: 1.3rem;
+  font-size: 0.85rem;
+  max-height: 150px;
+  overflow-y: auto;
 }
 
 #ranking-list {
   list-style: none;
   padding: 0;
   margin: 0;
+  text-align: left;
 }
 
 #ranking-list li {
@@ -127,10 +120,8 @@ button:active {
   color: white;
   border-radius: 6px;
   font-weight: bold;
-  text-align: left;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
-
 
 #modal {
   position: fixed;
@@ -154,4 +145,5 @@ button:active {
   width: 90%;
   max-width: 320px;
   text-align: center;
+  font-size: 1rem;
 }
