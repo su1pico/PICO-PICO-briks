@@ -7,6 +7,8 @@ html, body {
 }
 
 body {
+  background: url('capadojogo.png') no-repeat center center fixed;
+  background-size: contain;
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -26,6 +28,7 @@ body {
 }
 
 canvas {
+  background-color: transparent !important
   width: 100%;
   height: auto;
   display: block;
@@ -33,6 +36,7 @@ canvas {
 }
 
 #info {
+  font-weight: 700;
   display: flex;
   justify-content: space-around;
   flex-wrap: wrap;
@@ -43,6 +47,7 @@ canvas {
 }
 
 #next {
+  background: #222;
   width: 100px;
   height: 100px;
   margin: 10px auto;
