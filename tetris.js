@@ -330,7 +330,7 @@ document.getElementById("save-score-btn").addEventListener("click", () => {
     const scores = JSON.parse(localStorage.getItem("scores")) || [];
     scores.push({ name, score });
     scores.sort((a, b) => b.score - a.score);
-    scores.splice(10);
+    scores.splice(3);
     localStorage.setItem("scores", JSON.stringify(scores));
     location.reload();
   } else {
