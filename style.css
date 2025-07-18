@@ -18,6 +18,7 @@ html, body {
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  padding-top: 30px; /* espaço para o título */
 }
 
 /* === CONTAINER CENTRAL DO JOGO === */
@@ -46,8 +47,8 @@ h1 {
 /* === TABULEIRO PRINCIPAL === */
 #board {
   width: 100%;
-  max-width: 320px;
-  aspect-ratio: 1 / 1.6; /* ou até 1 / 1.5 */
+  max-width: 280px;
+  aspect-ratio: 1 / 1.4; /* ou até 1 / 1.5 */
   background: transparent;
   box-shadow: 0 0 8px rgba(0,0,0,0.1);
 }
