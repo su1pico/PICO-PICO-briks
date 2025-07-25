@@ -1,0 +1,79 @@
+/* === Ficheiros principais por ordem funcional: do núcleo à interface, extras e integração === */
+Nome do Ficheiro            Função Principal
+──────────────────────────  ──────────────────────────────────────────────────────────────────────────────────────────────
+motor.js                    Núcleo lógico: definição das peças por nível, colisões, rotação, matriz do tabuleiro e progressão
+canvas.js                   Renderização: desenho do tabuleiro, peça activa e próxima, e actualização visual de pontuação e tempo
+controlos.js                Entrada do jogador: teclado físico, gestos tácteis, vibração e alternância táctil arcade
+pontuacao.js                Sistema de pontuação: cálculo de linhas, combos, níveis, limite, ranking local e mensagens de celebração
+audio.js                    Ambiente sonoro: música retro, efeitos arcade, vibração e modo conforto auditivo
+cartao.js                   Cartão do jogador: criação pixelada por mérito, fundo holográfico, título lendário e exportação como imagem
+partilhas.js                Partilha de resultados: redes sociais, clipboard, link curto, imagem gerada, e-mail e perfil
+cerebro.js                  Lógica central: ciclo do jogo, velocidade por nível, geração de peças variáveis e integração dos módulos
+index.html                  Estrutura da interface: canvases, botões, modais, cartões, áudio, partilhas e ligação entre ficheiros
+style.css                   Estilo retro visual: layout arcade, animações, tipografia pixelizada, efeitos dinâmicos e fundo holográfico
+responsive.css              Adaptação de interface: escalonamento automático, modo retrato, acessibilidade móvel e optimização por ecrã
+
+/* === Sistema de Pontuação === */
+→ Cada linha eliminada vale 100 pontos
+
+→ Combos consecutivos são acumulados e aumentam o mérito do jogador
+
+→ Fórmula de progressão de nível:
+   nível = 1 + Math.floor(pontuação / 500)
+
+→ Limite máximo de pontuação:
+   999.999 pontos
+
+→ As peças evoluem visualmente e mecanicamente a partir do nível 10 e 20
+
+/* === Ranking Local (Top 10) === */
+→ Guardado no navegador via localStorage com chave `rankingTop10`
+
+→ Cada entrada inclui:
+   - Nome do jogador
+   - Pontuação final
+   - Nível atingido
+   - Tempo decorrido (MM:SS)
+   - Número total de combos
+   - Data da sessão (dd/mm/aaaa)
+
+→ Medalhas atribuídas por pontuação:
+   • Ouro       → ≥ 3000 pontos
+   • Prata      → ≥ 2000 pontos
+   • Bronze     → ≥ 1000 pontos
+   • Participação → < 1000
+
+→ Destaques visuais por estilo de jogo:
+   • Estratégia → ≥ 12 combos
+   • Rápido     → ≥ 6 combos
+   • Relâmpago  → tempo ≤ 01:00
+   • Resistente → restante
+
+/* === Cartão do Jogador === */
+→ Criado dinamicamente com fundo temático e méritos visuais
+→ Estilos por pontuação: Novato, Pixel, Neon, Ouro, Combo
+→ Modo conforto adapta o estilo visual para ambientes escuros
+→ Jogador com nível ≥ 20:
+   - Recebe fundo com efeito holográfico animado
+   - Título do cartão muda para “🏅 Cartão Lendário”
+→ Cartão pode ser exportado como imagem PNG
+→ Efeito holográfico é capturado correctamente na imagem criada
+
+/* === Controlo por Teclado e Táctil === */
+
+Tecla               Acção        
+─────────           ───────────────────────────────────────
+← (seta esquerda)   Move a peça para a esquerda  
+→ (seta direita)    Move a peça para a direita  
+↓ (seta abaixo)     Desce a peça lentamente  
+↑ (seta acima)      Roda a peça  
+Espaço              Queda instantânea até ao fundo  
+P                   Pausa o jogo
+
+→ No modo táctil:
+   - Rotação: toque duplo rápido (intervalo < 300ms) ou toque curto sem movimento
+   - Movimento lateral: deslize horizontal (>12px), com repetição automática a cada 90ms enquanto o dedo se move
+   - Descida rápida: toque longo (>500ms), aceleração vertical contínua a cada 80ms
+   - Descida ou queda única: deslize vertical (dy > 60px para queda total; caso contrário, descida de 1 linha)
+   - Botões visuais adaptados a ecrãs pequenos com repetição a cada 150ms
+   - Vibração activada onde disponível, com padrões distintos por tipo de acção

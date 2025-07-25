@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Pico-Pico Bricks">
+  <title>Pico-Pico Bricks</title>
+  <meta name="description" content="Jogo estilo Tetris do Pico-Pico">
+  <meta name="theme-color" content="#111">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="responsive.css">
+</head>
+<body lang="pt">
+  <div id="wrapper">
+    <div id="game-container">
+      <h1>Pico-Pico Bricks</h1>
+      <div id="info">
+        <div>Pontos: <span id="score">0</span></div>
+        <div>Nível: <span id="level">1</span></div>
+        <div>Tempo: <span id="time">00:00</span></div>
+      </div>
+      <div id="preview-container">
+        <h2 class="preview-title">Próxima Peça</h2>
+        <canvas id="next"></canvas>
+      </div>
+      <canvas id="board"></canvas>
+      <div id="botoes-principais">
+        <button id="startBtn">▶ Iniciar</button>
+        <button id="pauseBtn">⏸️ Pausa</button>
+        <button id="resetBtn">🔄 Reiniciar</button>
+      </div>
+      <div id="botoes-menus">
+        <button onclick="document.getElementById('popupAudio').classList.add('show')">🔊 Audio & Efeitos</button>
+        <button onclick="document.getElementById('popupPontuacoes').classList.add('show')">🏆 Pontuações</button>
+        <button onclick="document.getElementById('popupPartilhar').classList.add('show')">📤 Partilhar</button>
+      </div>
+      <div id="botao-unico">
+        <button id="resetPreferenciasBtn">🧹 Limpar Tudo</button>
+      </div>
+    </div>
+  </div>
+  <!-- Popup: Audio & Efeitos -->
+  <div id="popupAudio" class="popup-menu">
+    <div class="popup-content">
+      <h3>🔊 Audio & Efeitos</h3>
+      <button id="toggle-sound">🔊 Som</button>
+      <button id="alternarEfeitosBtn">🔔 Efeitos Activos</button>
+      <button id="modoSeguroBtn">👓 Modo Conforto</button>
+      <button onclick="document.getElementById('popupAudio').classList.remove('show')">❌ Fechar</button>
+    </div>
+  </div>
+  <!-- Popup: Pontuações -->
+  <div id="popupPontuacoes" class="popup-menu">
+    <div class="popup-content">
+      <h3>🏆 Pontuações</h3>
+      <button onclick="document.getElementById('modal').classList.add('show')">💾 Guardar Pontuação</button>
+      <button id="estatisticasBtn">📊 Estatísticas</button>
+      <button id="top10Btn">🏆 Top 10</button>
+      <button id="gerarCartaoJogador">🖼️ Criar Cartão do Jogador</button>
+      <button onclick="document.getElementById('popupPontuacoes').classList.remove('show')">❌ Fechar</button>
+    </div>
+  </div>
+  <!-- Popup: Partilhar -->
+  <div id="popupPartilhar" class="popup-menu">
+    <div class="popup-content">
+      <h3>📤 Menu Partilhar</h3>
+      <button data-partilhar="resultado">📊 Partilhar Resultado</button>
+      <button data-partilhar="perfil" data-rede="twitter">🐦 Twitter</button>
+      <button data-partilhar="perfil" data-rede="facebook">👥 Facebook</button>
+      <button data-partilhar="perfil" data-rede="whatsapp">💬 WhatsApp</button>
+      <button data-partilhar="perfil" data-rede="instagram">📸 Instagram</button>
+      <button data-partilhar="copiar">📋 Copiar Perfil</button>
+      <button data-partilhar="link">🔗 Link Curto</button>
+      <button data-partilhar="email">✉️ Enviar por Email</button>
+      <button onclick="document.getElementById('popupPartilhar').classList.remove('show')">❌ Fechar</button>
+    </div>
+  </div>
+  <!-- Celebração e conforto -->
+  <div id="celebracao"></div>
+  <div id="mensagemConforto" style="display: none;"></div>
+  <!-- Modal: Fim de Jogo -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <h2>Fim de Jogo 🎮</h2>
+      <p id="final-score">Pontuação: 0</p>
+      <p>Escreve o teu nome para guardar o resultado:</p>
+      <input type="text" id="player-name" placeholder="Jogador..." autocomplete="off" maxlength="24" />
+      <button id="confirmSave">Guardar</button>
+      <button id="cancelSave" onclick="document.getElementById('modal').classList.remove('show')">❌ Cancelar</button>
+    </div>
+  </div>
+  <!-- Modal: Top 10 -->
+  <div id="top10Modal" class="modal">
+    <div class="modal-content">
+      <h2>🏆 Top 10</h2>
+      <ul id="top10List"></ul>
+      <button id="fecharTop10">❌ Fechar</button>
+    </div>
+  </div>
+  <!-- Modal: Estatísticas -->
+  <div id="estatisticasModal" class="modal">
+    <div class="modal-content">
+      <h2 id="perfilJogador">📊 Estatísticas do Jogador</h2>
+      <ul id="estatisticasList"></ul>
+      <button id="fecharEstatisticas">❌ Fechar</button>
+    </div>
+  </div>
+  <!-- Modal: Cartão do Jogador -->
+  <div id="cartaoModal" class="modal">
+    <div class="modal-content" id="conteudoCartaoJogador">
+      <h2>🖼️ Cartão do Jogador</h2>
+      <div id="cartaoGerado"></div>
+      <button id="exportarCartaoBtn">📸 Exportar Cartão</button>
+      <button onclick="document.getElementById('cartaoModal').classList.remove('show')">❌ Fechar</button>
+    </div>
+  </div>
+  <!-- Sons do jogo -->
+  <audio id="musica-fundo" src="musica-fundo.mp3" loop preload="auto"></audio>
+  <audio id="rodar" src="rodar.mp3" preload="auto"></audio>
+  <audio id="colidir" src="colidir.mp3" preload="auto"></audio>
+  <audio id="perdeu" src="perdeu.mp3" preload="auto"></audio>
+  <!-- Biblioteca externa para exportar como imagem -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <!-- Módulos principais -->
+  <script type="module" src="./motor.js"></script>
+  <script type="module" src="./canvas.js"></script>
+  <script type="module" src="./controlos.js"></script>
+  <script type="module" src="./pontuacao.js"></script>
+  <script type="module" src="./audio.js"></script>
+  <script type="module" src="./partilhas.js"></script>
+  <script type="module" src="./cartao.js"></script>
+  <script type="module" src="./cerebro.js"></script>
+</body>
+</html>
